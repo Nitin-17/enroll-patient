@@ -1,11 +1,11 @@
-import React from "react";
-import HomePage from "./common/HomePage";
+import AppRoutes from "./routes";
+import { BrowserRouter } from "react-router-dom";
 
 const App = () => {
   return (
-    <>
-      <HomePage />
-    </>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   );
 };
 
