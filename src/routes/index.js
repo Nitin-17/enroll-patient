@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Login from "../modules/landing/components/login";
 import SignUp from "../modules/landing/components/signup";
-import Dashboard from "../modules/dashboard/dashboard";
+//import Dashboard from "../modules/dashboard/dashboard";
+import Dashboard from "../common/Dashboard";
 import PrivateRoute from "./PrivateRoute";
 import { isLogin } from "../helper/utils";
 
@@ -32,8 +33,10 @@ const AppRoutes = () => {
         path="/dashboard"
         element={
           <PrivateRoute
-            //{...defaultProtectedRouteProps}
-            outlet={<Dashboard />}
+            path="/dashboard"
+            element={<Dashboard />}
+            isAuthenticated={isLoggedIn}
+            authenticationPath="/login"
           />
         }
       />

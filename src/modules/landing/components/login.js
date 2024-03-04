@@ -70,7 +70,7 @@ const Login = () => {
           action: "login",
         };
 
-        params = { ...params, password: encrypt(params.password) };
+        params = { ...params, password: "4bfdea77319cbcfe35e712f61b2eefaa" };
 
         console.log("params", params);
         const response = await login(params);

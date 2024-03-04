@@ -3,10 +3,10 @@ import { Navigate } from "react-router";
 export default function PrivateRoute({
   isAuthenticated,
   authenticationPath,
-  outlet,
+  element,
 }) {
   if (isAuthenticated) {
-    return outlet;
+    return element;
   } else {
     return <Navigate to={{ pathname: authenticationPath }} />;
   }

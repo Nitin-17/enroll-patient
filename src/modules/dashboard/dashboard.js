@@ -16,6 +16,7 @@ const Dashboard = () => {
     localStorage.clear();
     navigate("/login");
   };
+  console.log("called");
 
   return (
     <div className="flex h-screen bg-gray-200">
