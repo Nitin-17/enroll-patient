@@ -1,17 +1,22 @@
 import React, { useState } from "react";
-import API from "../store/api-config/api-config";
-import { UseSelector, UseDispatch, useDispatch } from "react-redux";
-import {
-  fetchData,
-  getDoctorLocationList,
-} from "../store/actions/enrollPatientAction";
+import { useSelector, useDispatch } from "react-redux";
+import { fetchDoctorData } from "../store/reducers/enrollPatientReducer";
+import Loader from "../helper/Loader";
+import Modal from "../helper/Modal";
 
 const Dashboard = () => {
-  const [data, setData] = useState([]);
   const dispatch = useDispatch();
+  const { doctorLocationList, error } = useSelector(
+    (state) => state?.doctorData
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchDoctorLocationDetails = () => {
-    dispatch(fetchData);
+    setIsLoading(true);
+    dispatch(fetchDoctorData()).then((response) => {
+      console.log("success");
+      setIsLoading(false);
+    });
   };
 
   return (
@@ -22,6 +27,10 @@ const Dashboard = () => {
       >
         Enroll Patient
       </button>
+      {isLoading && <Loader />}
+      <Modal />
+      {error && <p>Error: {error}</p>}{" "}
+      {/* Render error message if error exists */}
     </div>
   );
 };

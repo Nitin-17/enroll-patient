@@ -1,8 +1,9 @@
 import client from "../../helper/axios";
 import API from "../api-config/api-config";
 import { addDoctorLocationData } from "../reducers/enrollPatientReducer";
+
 import axios from "axios";
-import { UseDispatch } from "react-redux";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 /* export const getDoctorLocationList = (dispatch) => {
   return client
@@ -17,7 +18,7 @@ import { UseDispatch } from "react-redux";
       throw error;
     });
 }; */
-export const fetchData = async (dispatch) => {
+/* export const fetchDoctorData = async (dispatch) => {
   try {
     const accessToken = localStorage.getItem("accessToken");
     console.log("accessToken is", accessToken);
@@ -39,6 +40,7 @@ export const fetchData = async (dispatch) => {
       )
       .then((response) => {
         if (response && response.data && response.data.success) {
+          console.log("called", response.data);
           dispatch(addDoctorLocationData(response.data));
         }
         return response.data;
@@ -52,4 +54,4 @@ export const fetchData = async (dispatch) => {
   } catch (error) {
     console.error("Error fetching data:", error);
   }
-};
+}; */

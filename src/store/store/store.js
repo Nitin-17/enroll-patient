@@ -1,6 +1,10 @@
+// store.js
 import { configureStore } from "@reduxjs/toolkit";
-import { doctorDataSlice } from "../reducers/enrollPatientReducer";
+import doctorDataReducer from "../reducers/enrollPatientReducer"; // Correct the path to your reducer file
 
 export const store = configureStore({
-  reducer: doctorDataSlice.reducer,
+  reducer: {
+    doctorData: doctorDataReducer,
+    // other reducers...
+  },
 });

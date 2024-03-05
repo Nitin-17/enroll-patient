@@ -1,11 +1,16 @@
 import React from "react";
 import { FcCheckmark } from "react-icons/fc";
 import { ImCross } from "react-icons/im";
+import { useSelector } from "react-redux";
 
 const SignupConfirmationModal = ({ isOpen, onClose, title, content }) => {
+  const { doctorLocationList, error } = useSelector(
+    (state) => state?.doctorData
+  );
+
   return (
     <>
-      {isOpen && (
+      {doctorLocationList.length > 0 && (
         <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-12 rounded-lg w-96 flex flex-col gap-2 items-center justify-center">
             <div className="flex justify-between items-center mb-2">
