@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { fetchDoctorData } from "../store/reducers/enrollPatientReducer";
 import Loader from "../helper/Loader";
 import Modal from "../helper/Modal";
+import EnrollPatient from "./index";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
@@ -28,9 +29,8 @@ const Dashboard = () => {
         Enroll Patient
       </button>
       {isLoading && <Loader />}
-      <Modal />
+      <EnrollPatient />
       {error && <p>Error: {error}</p>}{" "}
-      {/* Render error message if error exists */}
     </div>
   );
 };

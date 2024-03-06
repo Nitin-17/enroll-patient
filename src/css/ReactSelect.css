@@ -1,0 +1,13 @@
+/* selectStyles.css */
+.react-select__control--is-focused {
+  box-shadow: none !important;
+  border-color: #ced4da !important;
+}
+
+.react-select__menu {
+  z-index: 9999 !important;
+}
+
+.react-select__multi-value {
+  background-color: red;
+}

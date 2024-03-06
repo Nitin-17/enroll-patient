@@ -3,6 +3,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
 import Select from "react-select";
+import "../css/ReactSelect.css";
 
 const Modal = ({ isOpen, onClose }) => {
   const { doctorLocationList, error } = useSelector(
@@ -14,6 +15,7 @@ const Modal = ({ isOpen, onClose }) => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPhysician, setSelectedPhysician] = useState("");
+  const [showPhysicianList, setShowPhysicianList] = useState(false);
 
   const validationSchema = Yup.object().shape({
     location: Yup.string().required("Location is required"),
@@ -41,14 +43,41 @@ const Modal = ({ isOpen, onClose }) => {
 
   const handleNextPage = async (validateForm) => {
     console.log("validate");
-    const errors = await validateForm();
-    if (!Object.keys(errors).length) {
+    //const errors = await validateForm();
+    /*    if (!Object.keys(errors).length) {
       setCurrentPage(currentPage + 1);
-    }
+    } */
   };
 
   const handlePrevPage = () => {
     setCurrentPage(currentPage - 1);
+  };
+
+  const onChangeLocation = (selectedOption) => {
+    setSelectedLocation(selectedOption);
+    setSelectedDepartment("");
+    setSelectedPhysician("");
+    //setShowPhysicianList(false);
+  };
+
+  const onChangeDepartment = (selectedOption) => {
+    setSelectedDepartment(selectedOption);
+    setSelectedPhysician("");
+    //setShowPhysicianList(false);
+  };
+
+  const onChangePhysician = (selectedOption) => {
+    setSelectedPhysician(selectedOption);
+  };
+
+  const handleSubmit = (values) => {
+    console.log("valuessss", values);
+    const params = {
+      facilityLocationID: selectedLocation || "",
+      departmentID: values.department.value || "",
+      assignDoctorId: values.physician.value || "",
+    };
+    console.log("params", params);
   };
 
   return (
@@ -65,13 +94,14 @@ const Modal = ({ isOpen, onClose }) => {
             <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">
               <Formik
                 initialValues={initialValues}
-                validationSchema={validationSchema}
-                onSubmit={(values, { setSubmitting }) => {
-                  console.log(values);
-                  setSubmitting(false);
+                //validationSchema={validationSchema}
+                onSubmit={(values) => {
+                  console.log("called");
+                  handleSubmit(values);
+                  // setSubmitting(false);
                 }}
               >
-                {({ errors, touched, isSubmitting, values, validateForm }) => (
+                {({ errors, touched, isSubmitting, values }) => (
                   <Form>
                     <div className="w-full flex flex-col gap-6">
                       <h1 className="mb-4 flex justify-center text-xl">
@@ -82,79 +112,73 @@ const Modal = ({ isOpen, onClose }) => {
                         <Select
                           name="location"
                           value={selectedLocation}
-                          onChange={(option) => setSelectedLocation(option)}
+                          onChange={onChangeLocation}
                           placeholder="Select a Location"
                           options={doctorData.map((hospital) => ({
                             label: hospital.name,
                             value: hospital.hospitalID,
                           }))}
                         />
-                        <ErrorMessage name="location" component="div" />
+                        {touched.location && errors.location && (
+                          <div className="text-red-500">{errors.location}</div>
+                        )}
                       </div>
-                      <div>
+                      <div className="rounded-lg">
                         <Select
                           name="department"
                           value={selectedDepartment}
-                          onChange={(option) => setSelectedDepartment(option)}
+                          onChange={onChangeDepartment}
                           placeholder="Select a Department"
                           options={doctorData.map((hospital) => ({
                             label: hospital.name,
                             value: hospital.hospitalID,
                           }))}
                         />
-                        <ErrorMessage name="department" component="div" />
+                        {touched.department && errors.department && (
+                          <div className="text-red-500">
+                            {errors.department}
+                          </div>
+                        )}
                       </div>
-                      <div>
+                      <div className="rounded-lg">
                         <Select
                           name="physician"
                           value={selectedPhysician}
-                          onChange={(option) => setSelectedPhysician(option)}
+                          onChange={onChangePhysician}
                           placeholder="Select a Physician"
-                          options={doctorData.map((hospital) => ({
-                            label: hospital.name,
-                            value: hospital.hospitalID,
-                          }))}
+                          options={
+                            selectedDepartment &&
+                            selectedLocation &&
+                            Array.isArray(doctorData)
+                              ? doctorData.map((hospital) => ({
+                                  label: hospital.name,
+                                  value: hospital.hospitalID,
+                                }))
+                              : []
+                          }
                         />
-                        <ErrorMessage name="physician" component="div" />
+                        {touched.physician && errors.physician && (
+                          <div className="text-red-500">{errors.physician}</div>
+                        )}
                       </div>
                     </div>
 
                     <div className="modal-footer p-4">
-                      {/* {currentPage > 1 && (
-                        <button
-                          type="button"
-                          className="btn"
-                          onClick={handlePrevPage}
-                        >
-                          Previous
-                        </button>
-                      )}
-                      {currentPage < 4 && (
-                        <button
-                          type="button"
-                          className="btn ml-auto"
-                          onClick={() => handleNextPage(validateForm)}
-                        >
-                          Next
-                        </button>
-                      )}
-                      {currentPage === 4 && (
-                        <button type="submit" className="btn ml-auto">
-                          Submit
-                        </button>
-                      )} */}
-
-                      <div className="flex flex-row gap-2">
-                        <button
-                          className="w-32 rounded-full bg-cyan-400 border-2 p-1 text-sm justify-center"
-                          onClick={handleClose}
-                        >
-                          Cancel
-                        </button>
-                        <button className="w-fit rounded-full bg-cyan-400 border-2 p-2 text-sm justify-center">
-                          Next:Patient Details
-                        </button>
-                      </div>
+                      <button
+                        className="w-32 rounded-full bg-cyan-400 border-2 p-1 text-sm justify-center"
+                        onClick={handleClose}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="w-fit rounded-full bg-cyan-400 border-2 p-2 text-sm justify-center"
+                        //disabled={isSubmitting}
+                        //onClick={(values = handleSubmit(values))}
+                      >
+                        Next:Patient Details
+                      </button>
                     </div>
                   </Form>
                 )}
