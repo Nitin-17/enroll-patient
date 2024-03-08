@@ -64,6 +64,20 @@ export const encrypt = (text) => {
   return encrypted;
 };
 
+export const phoneRegex = /^[(]?\d{3}[)]?[(\s)?.-]\d{3}[\s.-]\d{4}$/g;
+export const phoneNumberFormatter = (input) => {
+  if (typeof input !== "string") return input;
+
+  input = input.replace(/^\+1|^(\+91)?/, ""); // Remove country codes
+  input = input.replace(/[^\d]/g, ""); // Strip non-numeric characters
+  input = input.substring(0, 10); // Limit to 10 digits
+
+  if (input.length < 4) return input;
+  return `(${input.substring(0, 3)})-${input.substring(3, 6)}${
+    input.length < 7 ? "" : `-${input.substring(6, 10)}`
+  }`;
+};
+
 export const isLogin = () => {
   if (_getAccessToken()) {
     return true;

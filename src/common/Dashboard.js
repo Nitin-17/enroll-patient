@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchDoctorData } from "../store/reducers/enrollPatientReducer";
+import {
+  fetchDoctorData,
+  fetchIcdCodes,
+} from "../store/reducers/enrollPatientReducer";
 import Loader from "../helper/Loader";
 import Modal from "../helper/Modal";
 import EnrollPatient from "./index";
@@ -11,12 +14,19 @@ const Dashboard = () => {
     (state) => state?.doctorData
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isClicked, setIsClicked] = useState(false);
 
   const fetchDoctorLocationDetails = () => {
     setIsLoading(true);
     dispatch(fetchDoctorData()).then((response) => {
       console.log("success");
       setIsLoading(false);
+      setIsClicked(true);
+    });
+    dispatch(fetchIcdCodes()).then((response) => {
+      console.log("success");
+      setIsLoading(false);
+      setIsClicked(true);
     });
   };
 
@@ -29,7 +39,7 @@ const Dashboard = () => {
         Enroll Patient
       </button>
       {isLoading && <Loader />}
-      <EnrollPatient />
+      <EnrollPatient isClicked={isClicked} setIsClicked={setIsClicked} />
       {error && <p>Error: {error}</p>}{" "}
     </div>
   );
