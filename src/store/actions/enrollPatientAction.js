@@ -55,3 +55,23 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
     console.error("Error fetching data:", error);
   }
 }; */
+
+export const verifyAddressAction = (params) => (dispatch) => {
+  console.log("params", params);
+  return client
+    .post(
+      `https://vitalsight-common-qa.ohiomron.com/qa/v2/doctor/verify-address`,
+      params,
+      {
+        headers: {
+          Authorization: localStorage.getItem("accessToken"),
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      throw error;
+    });
+};

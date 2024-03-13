@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchDoctorData,
   fetchIcdCodes,
+  getHospitalFeatures,
 } from "../store/reducers/enrollPatientReducer";
 import Loader from "../helper/Loader";
 import Modal from "../helper/Modal";
@@ -19,12 +20,18 @@ const Dashboard = () => {
   const fetchDoctorLocationDetails = () => {
     setIsLoading(true);
     dispatch(fetchDoctorData()).then((response) => {
-      console.log("success");
+      console.log("Called");
       setIsLoading(false);
       setIsClicked(true);
     });
     dispatch(fetchIcdCodes()).then((response) => {
-      console.log("success");
+      console.log("Called");
+      setIsLoading(false);
+      setIsClicked(true);
+    });
+    dispatch(getHospitalFeatures()).then((response) => {
+      console.log("Called");
+
       setIsLoading(false);
       setIsClicked(true);
     });

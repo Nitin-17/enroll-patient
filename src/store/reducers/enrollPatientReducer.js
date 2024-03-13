@@ -16,6 +16,7 @@ const initialState = {
     patientDevice: [],
   },
   suggestedAddress: {},
+  hospitalFeatures: {},
 };
 
 export const fetchDoctorData = createAsyncThunk(
@@ -23,7 +24,6 @@ export const fetchDoctorData = createAsyncThunk(
   async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-      console.log("accessToken is", accessToken);
       if (!accessToken) {
         console.error("Access token not found in localStorage");
         throw new Error("Access token not found in localStorage");
@@ -41,13 +41,13 @@ export const fetchDoctorData = createAsyncThunk(
       );
 
       if (response && response.data && response.data.success) {
-        console.log("called", response.data);
         return response.data;
       } else {
         throw new Error("Invalid response");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
+      //return error;
       throw error;
     }
   }
@@ -57,7 +57,6 @@ export const fetchIcdCodes = createAsyncThunk(
   async () => {
     try {
       const accessToken = localStorage.getItem("accessToken");
-      console.log("accessToken is", accessToken);
       if (!accessToken) {
         console.error("Access token not found in localStorage");
         throw new Error("Access token not found in localStorage");
@@ -99,7 +98,6 @@ export const fetchIcdCodes = createAsyncThunk(
         });
       });
 
-      console.log(groups, codes);
       return { groups, codes };
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -108,7 +106,7 @@ export const fetchIcdCodes = createAsyncThunk(
   }
 );
 
-export const fetchAddress = createAsyncThunk(
+/* export const fetchAddress = createAsyncThunk(
   "address/fetchAddress",
   async (params) => {
     console.log("params", params);
@@ -136,12 +134,46 @@ export const fetchAddress = createAsyncThunk(
       if (response && response.data && response.data.success) {
         console.log("called", response.data);
         return response.data;
-      } else {
-        throw new Error("Invalid response");
       }
     } catch (error) {
       console.error("Error fetching data:", error);
-      throw error;
+      //throw error;
+      return error;
+    }
+  }
+); */
+
+export const getHospitalFeatures = createAsyncThunk(
+  "hospitalFeatures/getHospitalFeatures",
+  async () => {
+    try {
+      const accessToken = localStorage.getItem("accessToken");
+      //console.log("accessToken is", accessToken);
+      if (!accessToken) {
+        console.error("Access token not found in localStorage");
+        throw new Error("Access token not found in localStorage");
+      }
+
+      const headers = {
+        Authorization: localStorage.getItem("accessToken"),
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      };
+      console.log("headers", headers);
+
+      const response = await client.get(
+        "https://vitalsight-common-qa.ohiomron.com/qa/v2/doctor/get-hospital-features",
+        { headers }
+      );
+
+      if (response && response.data && response.data.status) {
+        //console.log("called hospital feature", response);
+        return response.data;
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      //throw error;
+      return error;
     }
   }
 );
@@ -152,17 +184,18 @@ const doctorDataSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchDoctorData.fulfilled, (state, action) => {
-      console.log("extra reducer");
       state.doctorLocationList = action.payload;
     });
     builder.addCase(fetchIcdCodes.fulfilled, (state, action) => {
-      console.log("ic codes", action);
       state.icdCodes.icdGroups = action.payload.groups;
       state.icdCodes.icdCode = action.payload.codes;
     });
-    builder.addCase(fetchAddress.fulfilled, (state, action) => {
+    /*   builder.addCase(fetchAddress.fulfilled, (state, action) => {
       console.log("address", action);
       state.suggestedAddress = action.payload;
+    }); */
+    builder.addCase(getHospitalFeatures.fulfilled, (state, action) => {
+      state.hospitalFeatures = action.payload;
     });
   },
   addPatientDetails: (state, action) => {
