@@ -16,6 +16,7 @@ const Dashboard = () => {
   );
   const [isLoading, setIsLoading] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  const [icd10Codes, setIcd10Codes] = useState({});
 
   const fetchDoctorLocationDetails = () => {
     setIsLoading(true);
@@ -26,6 +27,8 @@ const Dashboard = () => {
     });
     dispatch(fetchIcdCodes()).then((response) => {
       console.log("Called");
+      console.log(response);
+      setIcd10Codes(response.payload);
       setIsLoading(false);
       setIsClicked(true);
     });
@@ -46,7 +49,11 @@ const Dashboard = () => {
         Enroll Patient
       </button>
       {isLoading && <Loader />}
-      <EnrollPatient isClicked={isClicked} setIsClicked={setIsClicked} />
+      <EnrollPatient
+        isClicked={isClicked}
+        setIsClicked={setIsClicked}
+        icd10Codes={icd10Codes}
+      />
       {error && <p>Error: {error}</p>}{" "}
     </div>
   );

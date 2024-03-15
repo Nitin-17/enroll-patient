@@ -6,13 +6,14 @@ import PatientAddress from "./PatientAddress";
 import PatientDevices from "./PatientDevices";
 import PatientThresholds from "./PatientThresholds";
 
-const EnrollPatient = ({ isClicked, setIsClicked }) => {
-  const [enrollStep, setEnrollStep] = useState(3);
+const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
+  const [patientData, setPatientData] = useState({});
+  const [enrollStep, setEnrollStep] = useState(0);
   const [doctorData, setDoctorData] = useState([]);
   const [icdCodeData, setIcdCodeData] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
   const { doctorLocationList } = useSelector((state) => state?.doctorData);
-  const { icdCodes } = useSelector((state) => state?.doctorData);
+  //const { icdCodes } = useSelector((state) => state?.doctorData);
   const { hospitalFeatures } = useSelector((state) => state?.doctorData);
 
   useEffect(() => {
@@ -21,10 +22,11 @@ const EnrollPatient = ({ isClicked, setIsClicked }) => {
       setDoctorData(doctorLocationList?.data);
     }
 
-    if (icdCodes.icdGroups.length > 0) {
-      setIcdCodeData(icdCodes.icdGroups);
+    if (icd10Codes?.codes && icd10Codes.codes.length > 0) {
+      console.log("index", icd10Codes.codes.length);
+      setIcdCodeData(icd10Codes);
     }
-  }, [doctorLocationList, icdCodes, hospitalFeatures]);
+  }, [doctorLocationList, icd10Codes, hospitalFeatures]);
 
   return (
     <>
@@ -33,6 +35,8 @@ const EnrollPatient = ({ isClicked, setIsClicked }) => {
           enrollStep={enrollStep}
           setEnrollStep={setEnrollStep}
           isClicked={isClicked}
+          patientData={patientData}
+          icdCodeData={icdCodeData}
         />
       )}
 

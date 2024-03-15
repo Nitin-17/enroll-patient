@@ -1,0 +1,37 @@
+.icd-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.icd-list li {
+  margin-bottom: 10px;
+}
+
+.icd-list span {
+  font-weight: bold;
+}
+
+.options-list {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.options-list li {
+  cursor: pointer;
+}
+
+.options {
+  display: none;
+  list-style-type: none;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.options li {
+  cursor: pointer;
+}
+
+.options-list li:hover .options {
+  display: block;
+}

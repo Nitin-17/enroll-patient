@@ -16,8 +16,29 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
 
   const dispatch = useDispatch();
 
+  const validateInput = (data) => {
+    const thresholdVal = parseInt(data);
+    return thresholdVal || 0;
+  };
+
   const handleSubmit = (values) => {
-    console.log(values);
+    const data = {
+      diaLowerLimit: validateInput(values.diastolicLowSingle),
+      diaUpperLimit: validateInput(values.diastolicHighSingle),
+      sysLowerLimit: validateInput(values.systolicLowSingle),
+      sysUpperLimit: validateInput(values.systolicHighSingle),
+      weight24: validateInput(values.weightGain24),
+      weight72: validateInput(values.weightGain72),
+      diaLowerAverage: validateInput(values.diastolicLowAverage),
+      diaUpperAverage: validateInput(values.diastolicHighAverage),
+      sysLowerAverage: validateInput(values.systolicLowAverage),
+      sysUpperAverage: validateInput(values.systolicHighAverage),
+      bpAverage: {
+        "10readings": checked10Readings ? 1 : 0,
+        "7day": checked7Days ? 1 : 0,
+      },
+    };
+    console.log(data);
     console.log("clicked on next");
   };
 
@@ -141,6 +162,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
+                  console.log("callllllllleddddd");
                   handleSubmit(values);
                   //alert(JSON.stringify(values, null, 2));
                   //setSubmitting(false);
@@ -155,7 +177,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                   handleSubmit,
                   setFieldValue,
                 }) => (
-                  <Form onSubmit={handleSubmit}>
+                  <Form>
                     <div className="flex flex-col justify-center items-center gap-4">
                       <h1 className="text-xl font-bold text-gray-700 mb-2">
                         Set Thresholds
