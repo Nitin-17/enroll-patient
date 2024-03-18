@@ -181,10 +181,40 @@ export const getHospitalFeatures = createAsyncThunk(
 const doctorDataSlice = createSlice({
   name: "doctorData",
   initialState,
-  reducers: {},
+  reducers: {
+    addPatientDetails: (state, action) => {
+      state.patientEnrollDetails.patientDetails = action.payload;
+      console.log(
+        "state.patientEnrollDetails.patientDetails",
+        state.patientEnrollDetails.patientDetails
+      );
+    },
+    addPatientAddress: (state, action) => {
+      state.patientEnrollDetails.patientAddress = action.payload;
+      console.log(
+        "state.patientEnrollDetails.patientAddress",
+        state.patientEnrollDetails.patientAddress
+      );
+    },
+    addPatientDevice: (state, action) => {
+      state.patientEnrollDetails.patientDevice = action.payload;
+      console.log(
+        "state.patientEnrollDetails.patientDevice",
+        state.patientEnrollDetails.patientDevice
+      );
+    },
+    addPatientThresholds: (state, action) => {
+      state.patientEnrollDetails.patientThresholds.push(action.payload);
+      console.log(
+        "state.patientEnrollDetails.patientThresholds",
+        state.patientEnrollDetails.patientThresholds
+      );
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchDoctorData.fulfilled, (state, action) => {
       state.doctorLocationList = action.payload;
+      console.log("doctorLocationData", state.doctorLocationList);
     });
     builder.addCase(fetchIcdCodes.fulfilled, (state, action) => {
       state.icdCodes.icdGroups = action.payload.groups;
@@ -198,11 +228,14 @@ const doctorDataSlice = createSlice({
       state.hospitalFeatures = action.payload;
     });
   },
-  addPatientDetails: (state, action) => {
-    state.patientDetails = action.payload;
-  },
 });
 
 export const { addDoctorLocationData } = doctorDataSlice.actions;
+export const {
+  addPatientDetails,
+  addPatientAddress,
+  addPatientThresholds,
+  addPatientDevice,
+} = doctorDataSlice.actions;
 
 export default doctorDataSlice.reducer;

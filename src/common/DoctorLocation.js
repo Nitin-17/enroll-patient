@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import "../css/ReactSelect.css";
+import { fetchDoctorData } from "../store/reducers/enrollPatientReducer";
 
-const Modal = ({ isOpen, onClose }) => {
+const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
   const { doctorLocationList, error } = useSelector(
     (state) => state?.doctorData
   );
@@ -16,6 +17,7 @@ const Modal = ({ isOpen, onClose }) => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPhysician, setSelectedPhysician] = useState("");
   const [showPhysicianList, setShowPhysicianList] = useState(false);
+  const dispatch = useDispatch();
 
   const validationSchema = Yup.object().shape({
     location: Yup.string().required("Location is required"),
@@ -74,15 +76,18 @@ const Modal = ({ isOpen, onClose }) => {
     console.log("valuessss", values);
     const params = {
       facilityLocationID: selectedLocation || "",
-      departmentID: values.department.value || "",
-      assignDoctorId: values.physician.value || "",
+      departmentID: values.department || "",
+      assignDoctorId: values.physician || "",
     };
-    console.log("params", params);
+    //console.log("params", params);
+    dispatch(fetchDoctorData(values));
+
+    setEnrollStep(1);
   };
 
   return (
     <>
-      {modalOpen && (
+      {modalOpen && enrollStep === 0 && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
             <div
@@ -96,7 +101,7 @@ const Modal = ({ isOpen, onClose }) => {
                 initialValues={initialValues}
                 //validationSchema={validationSchema}
                 onSubmit={(values) => {
-                  console.log("called");
+                  console.log("called", values);
                   handleSubmit(values);
                   // setSubmitting(false);
                 }}
@@ -191,4 +196,4 @@ const Modal = ({ isOpen, onClose }) => {
   );
 };
 
-export default Modal;
+export default DoctorLocation;

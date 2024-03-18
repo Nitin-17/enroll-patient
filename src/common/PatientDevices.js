@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addPatientDevice } from "../store/reducers/enrollPatientReducer";
 import "../css/ReactSelect.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import "../css/Tooltip.css";
 
-const PatientDevices = ({ hospitalData }) => {
+const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedBpDevice, setSelectedBpDevice] = useState(null);
@@ -18,6 +19,7 @@ const PatientDevices = ({ hospitalData }) => {
   const [isBpChecked, setIsBpChecked] = useState(false);
   const [isWeightChecked, setIsWeightChecked] = useState(false);
   const [supportedDevices, setSupportedDevices] = useState([]);
+  const dispatch = useDispatch();
   //const [params, setParams] = useState({});
 
   useEffect(() => {
@@ -87,6 +89,8 @@ const PatientDevices = ({ hospitalData }) => {
       };
       //setParams(values);
       console.log("params", values);
+      dispatch(addPatientDevice(values));
+      setEnrollStep(4);
     } else {
       alert("Select at least one device");
       setErrorMessage(true);
@@ -95,7 +99,7 @@ const PatientDevices = ({ hospitalData }) => {
 
   return (
     <>
-      {modalOpen && (
+      {modalOpen && enrollStep === 3 && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
             <div

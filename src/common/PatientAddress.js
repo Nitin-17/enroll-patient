@@ -4,6 +4,8 @@ import * as Yup from "yup";
 import { UseDispatch, useDispatch, useSelector } from "react-redux";
 import { fetchAddress } from "../store/reducers/enrollPatientReducer";
 import { verifyAddressAction } from "../store/actions/enrollPatientAction";
+import { addPatientAddress } from "../store/reducers/enrollPatientReducer";
+import { states } from "../helper/usaStates";
 
 const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
   const [modalOpen, setModalOpen] = useState(true);
@@ -21,49 +23,46 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
 
   const handleSubmit = (values) => {
     console.log(values);
-    console.log("clicked on next");
-    // let params = {};
+    let addressDetails;
     if (showShippingAddress) {
-      const shippingAdressDetails = {
-        address: {
-          addressLine1: values.shippingAddressLine1,
-          addressLine2: values.shippingAddressLine2
-            ? values.shippingAddressLine2
-            : "",
-          city: values.shippingCity,
-          countryCode: "US",
-          state: values.shippingState,
-          zip: values.shippingZip,
-        },
+      console.log("values shipping", values);
+
+      addressDetails = {
+        addressLine1: values.shippingAddressLine1,
+        addressLine2: values.shippingAddressLine2
+          ? values.shippingAddressLine2
+          : "",
+        city: values.shippingCity,
+        countryCode: "US",
+        state: values.shippingState,
+        zip: values.shippingZip,
       };
-      setParams(shippingAdressDetails);
+
+      //setParams(shippingAdressDetails);
     } else {
-      setParams({});
-      const primaryAddressDetails = {
-        address: {
-          addressLine1: values.addressLine1,
-          addressLine2: values.addressLine2 ? values.addressLine2 : "",
-          city: values.city,
-          countryCode: "US",
-          state: values.state,
-          zip: values.zip,
-        },
+      addressDetails = {
+        addressLine1: values.addressLine1,
+        addressLine2: values.addressLine2 ? values.addressLine2 : "",
+        city: values.city,
+        countryCode: "US",
+        state: values.state,
+        zip: values.zip,
       };
-      setParams(primaryAddressDetails);
     }
     setAddressErrorMessage("");
     setSuggestedAddresses("");
-    console.log("params", params);
     if (whichAddress === "") {
-      const response = dispatch(verifyAddressAction(params));
+      const response = dispatch(
+        verifyAddressAction({ address: addressDetails })
+      );
       response
         .then((response) => {
           if (response.success) {
             setaddressReceived(true);
             setSuggestedAddresses(response.data.candidate);
             console.log("sugggg", response.data.candidate);
-            setEnteredAddress(params);
-            console.log(response);
+            setEnteredAddress(values);
+            console.log("response is", response);
             //params.suggestedAddresses = response.data.candidate;
           } else {
             setAddressErrorMessage(response.message);
@@ -75,21 +74,30 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
         });
     }
     if (whichAddress !== "" && whichAddress === "enteredAddress") {
-      setFinalAddress(params);
-      console.log("Final Address", finalAddress);
+      console.log("enteres", whichAddress, enteredAddress);
+      //setFinalAddress(enteredAddress);
+      //console.log("Final Enter Address", finalAddress);
       setSuggestedAddresses([]);
-      setWhichAddress("");
-      setEnrollStep(2);
-    } else {
-      console.log("Finalll", suggestedAddresses[whichSuggestedAddress]);
-      setSuggestedAddresses([]);
-      setWhichAddress("");
 
-      setShowShippingAddress("");
-      console.log("nexttttt");
-      setEnrollStep(2);
+      dispatch(addPatientAddress(enteredAddress));
+      setEnrollStep(3);
+      setWhichAddress("");
     }
-    //setEnrollStep(2);
+    if (whichAddress !== "" && whichAddress === "suggestedAddress") {
+      setSuggestedAddresses([]);
+
+      dispatch(addPatientAddress(whichSuggestedAddress));
+      setEnrollStep(3);
+      setWhichAddress("");
+    } else {
+      //console.log("Finalll", suggestedAddresses[whichSuggestedAddress]);
+      //setSuggestedAddresses([]);
+      //setWhichAddress("");
+      //setShowShippingAddress("");
+      //console.log("nexttttt");
+      //setEnrollStep(3);
+    }
+    // setEnrollStep(3);
   };
 
   const validationSchema = Yup.object().shape({
@@ -149,7 +157,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
 
   return (
     <>
-      {modalOpen && enrollStep === 1 && isClicked && (
+      {modalOpen && enrollStep === 2 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
             <div
@@ -240,11 +248,27 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                               id="state"
                               name="state"
                               className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                              onChange={(event) => {
+                                setFieldValue(
+                                  "state",
+                                  event.target.value.trim()
+                                );
+                              }}
                             >
-                              <option value="">Select State</option>
-                              <option value="NY">New York</option>
-                              <option value="CA">California</option>
-                              <option value="TX">Texas</option>
+                              <option value="" defaultValue hidden>
+                                State
+                              </option>
+                              {states &&
+                                states.map((state, index) => {
+                                  return (
+                                    <option
+                                      key={state.abbreviation}
+                                      value={state.abbreviation}
+                                    >
+                                      {state.name}
+                                    </option>
+                                  );
+                                })}
                             </Field>
                             <ErrorMessage
                               name="state"
@@ -363,11 +387,27 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                                   id="shippingState"
                                   name="shippingState"
                                   className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                  onChange={(event) => {
+                                    setFieldValue(
+                                      "shippingState",
+                                      event.target.value.trim()
+                                    );
+                                  }}
                                 >
-                                  <option value="">Select State</option>
-                                  <option value="NY">New York</option>
-                                  <option value="CA">California</option>
-                                  <option value="TX">Texas</option>
+                                  <option value="" defaultValue hidden>
+                                    State
+                                  </option>
+                                  {states &&
+                                    states.map((state, index) => {
+                                      return (
+                                        <option
+                                          key={state.abbreviation}
+                                          value={state.abbreviation}
+                                        >
+                                          {state.name}
+                                        </option>
+                                      );
+                                    })}
                                 </Field>
                                 <ErrorMessage
                                   name="shippingState"
@@ -433,14 +473,12 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                                   <div className="font-medium text-black">
                                     Address entered
                                   </div>
-                                  <div>
-                                    {`${enteredAddress.address.addressLine1}`}
-                                  </div>
+                                  <div>{`${enteredAddress.addressLine1}`}</div>
                                   {`
-                                  ${enteredAddress?.address?.addressLine2}
-                                  ${enteredAddress.address.city},
-                                 ${enteredAddress.address.state}
-                                  ${enteredAddress.address.zip}`}
+                                  ${enteredAddress?.addressLine2}
+                                  ${enteredAddress.city},
+                                 ${enteredAddress.state}
+                                  ${enteredAddress.zip}`}
                                 </span>
                               </label>
 

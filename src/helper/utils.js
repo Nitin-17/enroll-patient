@@ -118,3 +118,8 @@ export const autoFormatPhoneNumber = (input) => {
     return input;
   }
 };
+
+export const formatDate = (dateString) => {
+  const dateObject = new Date(dateString);
+  return dateObject.toUTCString();
+};

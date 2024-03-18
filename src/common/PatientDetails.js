@@ -2,9 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Form, Field, ErrorMessage, Formik } from "formik";
 import * as Yup from "yup";
 import Select from "react-select";
-import { autoFormatPhoneNumber, phoneRegExp } from "../helper/utils.js";
+import {
+  autoFormatPhoneNumber,
+  phoneRegExp,
+  formatDate,
+} from "../helper/utils.js";
 import moment from "moment/moment.js";
 import "../css/IcdCodes.css";
+import { useDispatch } from "react-redux";
+import { addPatientDetails } from "../store/reducers/enrollPatientReducer.js";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -69,6 +75,7 @@ const PatientDetails = ({
 }) => {
   const [modalOpen, setModalOpen] = useState(true);
   const [icd10Codes, setIcd10Codes] = useState([]);
+  const dispatch = useDispatch();
   const initialValues = {
     firstName: "",
     lastName: "",
@@ -120,9 +127,11 @@ const PatientDetails = ({
           ? values.contactVia
           : { email: false, phone: false },
       countryCode: values.countryCode,
+      patientDob: formatDate(values.dob),
     };
     console.log("Patient Details clicked on next", data);
-    //setEnrollStep(1);
+    dispatch(addPatientDetails(data));
+    setEnrollStep(2);
   };
 
   const handleClose = () => {
@@ -131,7 +140,7 @@ const PatientDetails = ({
 
   return (
     <>
-      {modalOpen && enrollStep === 0 && isClicked && (
+      {modalOpen && enrollStep === 1 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
             <div

@@ -6,7 +6,7 @@ import {
   getHospitalFeatures,
 } from "../store/reducers/enrollPatientReducer";
 import Loader from "../helper/Loader";
-import Modal from "../helper/Modal";
+import Modal from "./DoctorLocation";
 import EnrollPatient from "./index";
 
 const Dashboard = () => {

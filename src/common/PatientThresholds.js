@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { Modal, Form, Field, ErrorMessage, Formik } from "formik";
 import * as Yup from "yup";
 import { UseDispatch, useDispatch, useSelector } from "react-redux";
-import { fetchAddress } from "../store/reducers/enrollPatientReducer";
+import {
+  fetchAddress,
+  addPatientThresholds,
+} from "../store/reducers/enrollPatientReducer";
 import { verifyAddressAction } from "../store/actions/enrollPatientAction";
 import "../css/PatientThresholds.css";
 
@@ -39,7 +42,8 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
       },
     };
     console.log(data);
-    console.log("clicked on next");
+    dispatch(addPatientThresholds(data));
+    setEnrollStep(5);
   };
 
   const validationSchema = Yup.lazy(() => {
@@ -137,7 +141,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
 
   return (
     <>
-      {modalOpen && enrollStep === 3 && isClicked && (
+      {modalOpen && enrollStep === 4 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
             <div

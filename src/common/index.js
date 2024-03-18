@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
-import Modal from "../helper/Modal";
+import DoctorLocation from "./DoctorLocation";
 import PatientDetails from "./PatientDetails";
 import { useSelector } from "react-redux";
 import PatientAddress from "./PatientAddress";
 import PatientDevices from "./PatientDevices";
 import PatientThresholds from "./PatientThresholds";
+import EditDetails from "./EditDetails";
 
 const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
   const [patientData, setPatientData] = useState({});
-  const [enrollStep, setEnrollStep] = useState(0);
+  const [enrollStep, setEnrollStep] = useState(4);
   const [doctorData, setDoctorData] = useState([]);
   const [icdCodeData, setIcdCodeData] = useState({});
   const [modalOpen, setModalOpen] = useState(false);
@@ -31,6 +32,15 @@ const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
   return (
     <>
       {enrollStep === 0 && (
+        <DoctorLocation
+          enrollStep={enrollStep}
+          setEnrollStep={setEnrollStep}
+          isClicked={isClicked}
+          patientData={patientData}
+          icdCodeData={icdCodeData}
+        />
+      )}
+      {enrollStep === 1 && (
         <PatientDetails
           enrollStep={enrollStep}
           setEnrollStep={setEnrollStep}
@@ -40,7 +50,7 @@ const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
         />
       )}
 
-      {enrollStep === 1 && (
+      {enrollStep === 2 && (
         <PatientAddress
           enrollStep={enrollStep}
           setEnrollStep={setEnrollStep}
@@ -49,7 +59,7 @@ const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
         />
       )}
 
-      {enrollStep === 2 && (
+      {enrollStep === 3 && (
         <PatientDevices
           enrollStep={enrollStep}
           setEnrollStep={setEnrollStep}
@@ -58,8 +68,17 @@ const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
         />
       )}
 
-      {enrollStep === 3 && (
+      {enrollStep === 4 && (
         <PatientThresholds
+          enrollStep={enrollStep}
+          setEnrollStep={setEnrollStep}
+          isClicked={isClicked}
+          hospitalData={hospitalFeatures.data}
+        />
+      )}
+
+      {enrollStep === 5 && (
+        <EditDetails
           enrollStep={enrollStep}
           setEnrollStep={setEnrollStep}
           isClicked={isClicked}
