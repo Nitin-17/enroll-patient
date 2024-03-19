@@ -104,7 +104,13 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
   };
 
   const validationSchema = Yup.object().shape({
-    addressLine1: Yup.string().required("Address Line 1 is required"),
+    addressLine1: Yup.string()
+      .required("Address Line 1 is required")
+      .max(40, "Address Line 1 should not exceed 40 characters")
+      .matches(/^[a-z\d\-_\s]+$/i, "Address Line 1 is invalid"),
+    addressLine2: Yup.string()
+      .max(40, "Address Line 1 should not exceed 40 characters")
+      .matches(/^[a-z\d\-_\s]+$/i, "Address Line 1 is invalid"),
     city: Yup.string().required("City is required"),
     state: Yup.string().required("State is required"),
     zip: Yup.string()
@@ -260,7 +266,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                             />
                           </div>
                           <div className="flex flex-row flex-wrap gap-6">
-                            <div className="flex flex-row">
+                            <div className="flex flex-col">
                               {/* <label htmlFor="state">State*</label> */}
                               <Field
                                 as="select"

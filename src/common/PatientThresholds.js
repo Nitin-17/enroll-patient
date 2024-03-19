@@ -8,6 +8,9 @@ import {
 } from "../store/reducers/enrollPatientReducer";
 import { verifyAddressAction } from "../store/actions/enrollPatientAction";
 import "../css/PatientThresholds.css";
+import { Link } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
   const [modalOpen, setModalOpen] = useState(true);
@@ -144,10 +147,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
       {modalOpen && enrollStep === 4 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={handleClose}
-            >
+            <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
             <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">
@@ -181,7 +181,21 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                   handleSubmit,
                   setFieldValue,
                 }) => (
-                  <Form>
+                  <Form className="flex flex-col gap-4 bg-[#f6f9fd] p-2 rounded-lg pl-8 pr-8">
+                    <div className=" flex flex-row justify-between">
+                      <Link to="#" onClick={() => setEnrollStep(3)}>
+                        <span aria-hidden="true">
+                          <FontAwesomeIcon icon={faArrowLeft} color="#0e55aa" />
+                        </span>{" "}
+                        Go back
+                      </Link>
+                      <span className="font-medium">
+                        <span className="text-[#0e55aa] font-bold">
+                          Step {enrollStep}
+                        </span>
+                        / 04
+                      </span>
+                    </div>
                     <div className="flex flex-col justify-center items-center gap-4">
                       <h1 className="text-xl font-bold text-gray-700 mb-2">
                         Set Thresholds
@@ -201,16 +215,16 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                     </div>
                     {showAll && (
                       <>
-                        <div className="flex flex-col gap-8">
-                          <div className="flex flex-col gap-4">
+                        <div className="flex flex-col gap-8 pr-8 pl-8">
+                          <div className="flex flex-col gap-4 justify-center">
                             <label
-                              className="block text-sm font-bold text-gray-700 mb-2"
+                              className="block text-xs font-bold text-gray-700 mb-1"
                               htmlFor="systolicHighSingle"
                             >
                               Blood Pressure Threshold (single reading)
                             </label>
                             {/* BP Single Reading for Sys and Dia both Low and High*/}
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="flex flex-row gap-10 justify-start">
                               <div className="flex flex-col items-center justify-center">
                                 <label
                                   className={
@@ -231,7 +245,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                   type="number"
                                   name="systolicHighSingle"
                                   aria-describedby="systolicHighSingleError"
-                                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "systolicHighSingle",
@@ -279,7 +293,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 <Field
                                   type="number"
                                   name="systolicLowSingle"
-                                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "systolicLowSingle",
@@ -305,7 +319,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 </div>
                               </div>
                             </div>
-                            <div className="grid grid-cols-2 gap-6">
+                            <div className="flex flex-row justify-start gap-10">
                               <div className="flex flex-col items-center justify-center">
                                 <label
                                   className={
@@ -326,7 +340,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                   type="number"
                                   name="diastolicHighSingle"
                                   aria-describedby="diastolicHighSingleError"
-                                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "diastolicHighSingle",
@@ -374,7 +388,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 <Field
                                   type="number"
                                   name="diastolicLowSingle"
-                                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "diastolicLowSingle",
@@ -404,43 +418,47 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                         </div>
 
                         {/* BP Average  */}
-                        <div className="flex flex-col gap-4 mt-4">
-                          <div className="flex flex-row gap-4">
+                        <div className="flex flex-col gap-4 p-8">
+                          <div className="flex flex-row gap-6">
                             <label
-                              className="block text-sm text-gray-700 font-bold"
+                              className="block text-xs text-gray-700 font-bold"
                               htmlFor="systolicHighSingle"
                             >
                               Blood Pressure Threshold (Average)
                             </label>
-                            <div className="flex items-center justify-center gap-1">
-                              <label htmlFor="seven-days" className="text-sm">
-                                7 Days
-                              </label>
-                              <input
-                                type="checkbox"
-                                id="seven-days"
-                                checked={checked7Days}
-                                onChange={() => setChecked7Days(!checked7Days)}
-                                className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                              />
-                            </div>
-                            <div className="flex items-center justify-center gap-1">
-                              <label htmlFor="ten-days" className="text-sm">
-                                10 Days
-                              </label>
-                              <input
-                                type="checkbox"
-                                id="ten-days"
-                                checked={checked10Readings}
-                                onChange={() =>
-                                  setChecked10Reading(!checked10Readings)
-                                }
-                                className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                              />
+                            <div className="flex flex-row gap-4">
+                              <div className="flex items-center justify-center gap-1">
+                                <input
+                                  type="checkbox"
+                                  id="seven-days"
+                                  checked={checked7Days}
+                                  onChange={() =>
+                                    setChecked7Days(!checked7Days)
+                                  }
+                                  className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                />
+                                <label htmlFor="seven-days" className="text-xs">
+                                  7 Days
+                                </label>
+                              </div>
+                              <div className="flex items-center justify-center gap-1">
+                                <input
+                                  type="checkbox"
+                                  id="ten-days"
+                                  checked={checked10Readings}
+                                  onChange={() =>
+                                    setChecked10Reading(!checked10Readings)
+                                  }
+                                  className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                />
+                                <label htmlFor="ten-days" className="text-xs">
+                                  10 Readings
+                                </label>
+                              </div>
                             </div>
                           </div>
                           {/* BP Average Reading for Sys and Dia both Low and High*/}
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className="flex flex-row justify-start gap-10">
                             <div className="flex flex-col items-center justify-center">
                               <label
                                 className={
@@ -461,7 +479,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 type="number"
                                 name="systolicHighAverage"
                                 aria-describedby="systolicHighAverageError"
-                                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 onChange={(event) => {
                                   setFieldValue(
                                     "systolicHighAverage",
@@ -509,7 +527,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                               <Field
                                 type="number"
                                 name="systolicLowAverage"
-                                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 onChange={(event) => {
                                   setFieldValue(
                                     "systolicLowAverage",
@@ -535,7 +553,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                               </div>
                             </div>
                           </div>
-                          <div className="grid grid-cols-2 gap-6">
+                          <div className="flex flex-row justify-start gap-10">
                             <div className="flex flex-col items-center justify-center">
                               <label
                                 className={
@@ -556,7 +574,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 type="number"
                                 name="diastolicHighAverage"
                                 aria-describedby="diastolicHighAverageError"
-                                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 onChange={(event) => {
                                   setFieldValue(
                                     "diastolicHighAverage",
@@ -604,7 +622,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                               <Field
                                 type="number"
                                 name="diastolicLowAverage"
-                                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                 onChange={(event) => {
                                   setFieldValue(
                                     "diastolicLowAverage",
@@ -637,13 +655,13 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                           {/* Weight Gain */}
                           <div className="flex flex-col gap-4 mt-2">
                             <label
-                              className="block text-sm font-bold text-gray-700"
+                              className="block text-xs font-bold text-gray-700"
                               htmlFor="WeightGain"
                             >
                               Weight Gain Threshold
                             </label>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="flex flex-row justify-start gap-10">
                               <div className="flex flex-col items-center justify-center">
                                 <label
                                   className={
@@ -662,7 +680,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 <Field
                                   type="number"
                                   name="weightGain24"
-                                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "weightGain24",
@@ -710,7 +728,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 <Field
                                   type="number"
                                   name="weightGain72"
-                                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                  className="w-64 px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "weightGain72",
@@ -743,9 +761,10 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                         </div>
                       </>
                     )}
-                    <div className="modal-footer p-4 flex flex-row justify-between">
+
+                    <div className="modal-footer flex flex-row justify-start gap-6">
                       <button
-                        className="w-32 rounded-full bg-cyan-400 border-2 p-1 text-sm justify-center"
+                        className="w-72 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                         onClick={handleClose}
                         type="button"
                       >
@@ -753,10 +772,9 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
                       </button>
                       <button
                         type="submit"
-                        className="w-fit rounded-full bg-cyan-400 border-2 p-2 text-sm justify-center"
-                        // onClick={handleSubmit}
+                        className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                       >
-                        Next: Patient Details
+                        Next : Order Device
                       </button>
                     </div>
                   </Form>
