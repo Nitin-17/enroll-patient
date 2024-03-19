@@ -7,6 +7,8 @@ import "../css/ReactSelect.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faQuestionCircle } from "@fortawesome/free-solid-svg-icons";
 import "../css/Tooltip.css";
+import { Link } from "react-router-dom";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,7 +94,7 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
       dispatch(addPatientDevice(values));
       setEnrollStep(4);
     } else {
-      alert("Select at least one device");
+      //alert("Select at least one device");
       setErrorMessage(true);
     }
   };
@@ -102,16 +104,27 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
       {modalOpen && enrollStep === 3 && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={handleClose}
-            >
+            <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">
-              <div>
-                <div className="container mx-auto px-4 py-4 flex flex-col gap-4">
-                  <h1 className="text-center text-xl font-bold mb-8">
+            <div className="relative bg-white rounded-lg p-4 w-9/12 mx-auto">
+              <div className="flex flex-col gap-4 bg-[#f6f9fd] p-2 rounded-lg pl-8 pr-8">
+                <div className=" flex flex-row justify-between">
+                  <Link to="#" onClick={() => setEnrollStep(0)}>
+                    <span aria-hidden="true">
+                      <FontAwesomeIcon icon={faArrowLeft} color="#0e55aa" />
+                    </span>{" "}
+                    Go back
+                  </Link>
+                  <span className="font-medium">
+                    <span className="text-[#0e55aa] font-bold">
+                      Step {enrollStep}
+                    </span>
+                    / 04
+                  </span>
+                </div>
+                <div className="container mx-auto px-4 py-2 flex flex-col gap-4">
+                  <h1 className="text-center text-xl font-medium mb-8">
                     Select Devices
                   </h1>
 
@@ -152,9 +165,12 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                               disabled={!isBpChecked}
                               className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             />
-                            <label htmlFor="regular-cuff" className="text-sm">
+                            <label
+                              htmlFor="regular-cuff"
+                              className="text-xs flex flex-col gap-1"
+                            >
                               <div className="flex flex-row gap-2 items-center">
-                                Regular Cuff
+                                <h1 className="font-medium">Regular Cuff</h1>
                                 <div class="tooltip">
                                   <FontAwesomeIcon
                                     icon={faQuestionCircle}
@@ -172,6 +188,7 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                                   </span>
                                 </div>
                               </div>
+                              <p className="text-xs">9" to 17" /22 to 42cm</p>
                             </label>
                           </div>
                         )}
@@ -191,9 +208,12 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                               onChange={handleCuffSizeChange}
                               className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             />
-                            <label htmlFor="large-cuff" className="text-sm">
+                            <label
+                              htmlFor="large-cuff"
+                              className="text-xs flex flex-col gap-1"
+                            >
                               <div className="flex flex-row gap-2 items-center">
-                                Large Cuff
+                                <h1 className="font-medium">Large Cuff</h1>
                                 <div class="tooltip">
                                   <FontAwesomeIcon
                                     icon={faQuestionCircle}
@@ -210,6 +230,7 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                                   </span>
                                 </div>
                               </div>
+                              <p className="text-xs">17" to 20" / 42 to 50cm</p>
                             </label>
                           </div>
                         )}
@@ -236,7 +257,7 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                       </label>
                     </div>
 
-                    <div className="flex flex-row items-center justify-between mt-4 w-9/12">
+                    <div className="flex flex-row items-center justify-between mt-4 w-9/12 gap-4">
                       {supportedDevices &&
                         supportedDevices.length > 0 &&
                         supportedDevices.find(
@@ -253,9 +274,12 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                               disabled={!isWeightChecked}
                               className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             />
-                            <label htmlFor="regular-weight" className="text-sm">
+                            <label
+                              htmlFor="regular-weight"
+                              className="text-xs flex flex-col gap-1"
+                            >
                               <div className="flex flex-row gap-2 items-center">
-                                Regular
+                                <h1 className="font-medium">Regular</h1>
                                 <div class="tooltip">
                                   <FontAwesomeIcon
                                     icon={faQuestionCircle}
@@ -275,6 +299,9 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                                   </span>
                                 </div>
                               </div>
+                              <p className="text-xs">
+                                5 - 297 lbs / 2 - 135 kgs
+                              </p>
                             </label>
                           </div>
                         )}
@@ -294,9 +321,12 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                               onChange={handleWeightChange}
                               className="mr-2 w-5 h-5 accent-blue-600 focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             />
-                            <label htmlFor="large-weight" className="text-sm">
+                            <label
+                              htmlFor="large-weight"
+                              className="text-xs flex flex-col gap-1"
+                            >
                               <div className="flex flex-row gap-2 items-center">
-                                Extra Large
+                                <h1 className="font-medium">Extra Large</h1>
                                 <div class="tooltip">
                                   <FontAwesomeIcon
                                     icon={faQuestionCircle}
@@ -315,6 +345,9 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                                   </span>
                                 </div>
                               </div>
+                              <p className="text-xs">
+                                11 - 550 lbs / 5 - 250 kgs
+                              </p>
                             </label>
                           </div>
                         )}
@@ -332,7 +365,7 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
 
                   <div className="modal-footer p-4 flex flex-row justify-between">
                     <button
-                      className="w-32 rounded-full bg-cyan-400 border-2 p-1 text-sm justify-center"
+                      className="w-72 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                       onClick={handleClose}
                       type="button"
                     >
@@ -340,10 +373,10 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
                     </button>
                     <button
                       type="submit"
-                      className="w-fit rounded-full bg-cyan-400 border-2 p-2 text-sm justify-center"
                       onClick={handleSubmit}
+                      className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                     >
-                      Next: Patient Details
+                      Next : Patient Thresholds
                     </button>
                   </div>
                 </div>

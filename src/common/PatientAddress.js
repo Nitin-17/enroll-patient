@@ -6,6 +6,9 @@ import { fetchAddress } from "../store/reducers/enrollPatientReducer";
 import { verifyAddressAction } from "../store/actions/enrollPatientAction";
 import { addPatientAddress } from "../store/reducers/enrollPatientReducer";
 import { states } from "../helper/usaStates";
+import { Link } from "react-router-dom";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
   const [modalOpen, setModalOpen] = useState(true);
@@ -92,7 +95,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
     } else {
       //console.log("Finalll", suggestedAddresses[whichSuggestedAddress]);
       //setSuggestedAddresses([]);
-      //setWhichAddress("");
+      setWhichAddress("");
       //setShowShippingAddress("");
       //console.log("nexttttt");
       //setEnrollStep(3);
@@ -159,11 +162,11 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
     <>
       {modalOpen && enrollStep === 2 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-center justify-center min-h-screen p-4">
+          <div className="flex items-center justify-center min-h-screen p-2">
             <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">
+            <div className="relative bg-white rounded-lg p-4 w-9/12 mx-auto">
               <Formik
                 initialValues={{
                   addressLine1: "",
@@ -183,38 +186,55 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                 }}
               >
                 {({ values, errors, touched, setFieldValue }) => (
-                  <Form className="space-y-4">
+                  <Form className="flex flex-col gap-4 bg-[#f6f9fd] p-2 rounded-lg pl-8 pr-8">
+                    <div className=" flex flex-row justify-between">
+                      <Link to="#" onClick={() => setEnrollStep(0)}>
+                        <span aria-hidden="true">
+                          <FontAwesomeIcon icon={faArrowLeft} color="#0e55aa" />
+                        </span>{" "}
+                        Go back
+                      </Link>
+                      <span className="font-medium">
+                        <span className="text-[#0e55aa] font-bold">
+                          Step {enrollStep}
+                        </span>
+                        / 04
+                      </span>
+                    </div>
                     <div className="flex flex-col gap-5">
-                      <div>
-                        <div>
-                          <h1 className="text-lg flex flex-row justify-center items-center m-3 font-bold text-blue-900">
-                            Primary Address
-                          </h1>
-                        </div>
-                        <div className="flex flex-col md:flex-row md:space-x-4">
-                          <div className="flex flex-col w-full">
-                            <label htmlFor="addressLine1">
+                      <div className="flex flex-col gap-4">
+                        <h1 className="flex justify-center text-xl font-medium">
+                          Patient Address
+                        </h1>
+                        <p className="text-sm">* indicates a required field</p>
+                      </div>
+                      <div className="flex flex-col flex-wrap gap-10">
+                        <div className="flex flex-row md:flex-row items-center justify-start gap-10 flex-wrap">
+                          <div className="flex flex-col">
+                            {/* <label htmlFor="addressLine1">
                               Address Line 1*
-                            </label>
+                            </label> */}
                             <Field
                               type="text"
                               id="addressLine1"
                               name="addressLine1"
-                              className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                              placeholder="Address Line 1*"
+                              className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                             <ErrorMessage
                               name="addressLine1"
                               component="div"
-                              className="text-red-500 text-xs"
+                              className="text-red-500 text-xs absolute mt-10 ml-10 text-center"
                             />
                           </div>
-                          <div className="flex flex-col w-full">
-                            <label htmlFor="addressLine2">Address Line 2</label>
+                          <div className="flex flex-col flex-wrap">
+                            {/* <label htmlFor="addressLine2">Address Line 2</label> */}
                             <Field
                               type="text"
                               id="addressLine2"
                               name="addressLine2"
-                              className="py-3 px-4 block w-full border solid border-black-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-white-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                              placeholder="addressLine2"
+                              className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                             <ErrorMessage
                               name="addressLine2"
@@ -223,14 +243,15 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                             />
                           </div>
                         </div>
-                        <div className="flex flex-col md:flex-row md:space-x-4">
-                          <div className="flex flex-col w-full">
-                            <label htmlFor="city">City*</label>
+                        <div className="flex flex-col md:flex-row  gap-10">
+                          <div className="flex flex-col">
+                            {/*  <label htmlFor="city">City*</label> */}
                             <Field
                               type="text"
                               id="city"
                               name="city"
-                              className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                              placeholder="city*"
+                              className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             />
                             <ErrorMessage
                               name="city"
@@ -238,59 +259,63 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                               className="text-red-500 text-xs"
                             />
                           </div>
-                          <div className="flex flex-col w-full">
-                            <label htmlFor="state">State*</label>
-                            <Field
-                              as="select"
-                              id="state"
-                              name="state"
-                              className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-                              onChange={(event) => {
-                                setFieldValue(
-                                  "state",
-                                  event.target.value.trim()
-                                );
-                              }}
-                            >
-                              <option value="" defaultValue hidden>
-                                State
-                              </option>
-                              {states &&
-                                states.map((state, index) => {
-                                  return (
-                                    <option
-                                      key={state.abbreviation}
-                                      value={state.abbreviation}
-                                    >
-                                      {state.name}
-                                    </option>
+                          <div className="flex flex-row flex-wrap gap-6">
+                            <div className="flex flex-row">
+                              {/* <label htmlFor="state">State*</label> */}
+                              <Field
+                                as="select"
+                                id="state"
+                                name="state"
+                                placeholder="state*"
+                                className="bg-gray-50 border text-sm h-11 rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-36 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                onChange={(event) => {
+                                  setFieldValue(
+                                    "state",
+                                    event.target.value.trim()
                                   );
-                                })}
-                            </Field>
-                            <ErrorMessage
-                              name="state"
-                              component="div"
-                              className="text-red-500 text-xs"
-                            />
-                          </div>
-                          <div className="flex flex-col w-full">
-                            <label htmlFor="zip">Zip*</label>
-                            <Field
-                              type="text"
-                              id="zip"
-                              name="zip"
-                              className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
-                            />
-                            <ErrorMessage
-                              name="zip"
-                              component="div"
-                              className="text-red-500 text-xs"
-                            />
+                                }}
+                              >
+                                <option value="" defaultValue hidden>
+                                  State
+                                </option>
+                                {states &&
+                                  states.map((state, index) => {
+                                    return (
+                                      <option
+                                        key={state.abbreviation}
+                                        value={state.abbreviation}
+                                      >
+                                        {state.name}
+                                      </option>
+                                    );
+                                  })}
+                              </Field>
+                              <ErrorMessage
+                                name="state"
+                                component="div"
+                                className="text-red-500 text-xs"
+                              />
+                            </div>
+                            <div className="flex flex-col">
+                              {/*  <label htmlFor="zip">Zip*</label> */}
+                              <Field
+                                type="text"
+                                id="zip"
+                                name="zip"
+                                placeholder="zip*"
+                                className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-28 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                              />
+                              <ErrorMessage
+                                name="zip"
+                                component="div"
+                                className="text-red-500 text-xs"
+                              />
+                            </div>
                           </div>
                         </div>
                       </div>
 
-                      <div>
+                      <div className="mt-4">
                         <div className="flex items-center space-x-2">
                           <Field
                             type="checkbox"
@@ -312,7 +337,8 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                             htmlFor="useShippingAddress"
                             className="text-sm"
                           >
-                            Use Shipping address than primary
+                            Shipping address is different than the primary
+                            address
                           </label>
                         </div>
                       </div>
@@ -321,39 +347,41 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                       <div>
                         {showShippingAddress && (
                           <div>
-                            <h1 className="text-lg flex flex-row justify-center items-center m-3 font-bold text-blue-900">
+                            <h1 className="text-lg flex flex-row justify-center items-center m-3 font-medium">
                               Shipping Address
                             </h1>
                           </div>
                         )}
                         {showShippingAddress && (
-                          <div>
-                            <div className="flex flex-col md:flex-row md:space-x-4">
-                              <div className="flex flex-col w-full">
-                                <label htmlFor="shippingAddressLine1">
+                          <div className="flex flex-col flex-wrap gap-8 mt-4">
+                            <div className="flex flex-row md:flex-row items-center justify-start gap-10 flex-wrap">
+                              <div className="flex flex-col">
+                                {/* <label htmlFor="shippingAddressLine1">
                                   Address Line 1*
-                                </label>
+                                </label> */}
                                 <Field
                                   type="text"
                                   id="shippingAddressLine1"
                                   name="shippingAddressLine1"
-                                  className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                  placeholder="Address Line 1*"
+                                  className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 />
                                 <ErrorMessage
                                   name="shippingAddressLine1"
                                   component="div"
-                                  className="text-red-500 text-xs"
+                                  className="text-red-500 text-xs absolute mt-10 ml-10 text-center"
                                 />
                               </div>
-                              <div className="flex flex-col w-full">
-                                <label htmlFor="shippingAddressLine2">
+                              <div className="flex flex-col">
+                                {/* <label htmlFor="shippingAddressLine2">
                                   Address Line 2
-                                </label>
+                                </label> */}
                                 <Field
                                   type="text"
                                   id="shippingAddressLine2"
                                   name="shippingAddressLine2"
-                                  className="py-3 px-4 block w-full border solid border-black-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:bg-white-900 dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                  placeholder="Address Line 2"
+                                  className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 />
                                 <ErrorMessage
                                   name="shippingAddressLine2"
@@ -362,14 +390,15 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                                 />
                               </div>
                             </div>
-                            <div className="flex flex-col md:flex-row md:space-x-4">
-                              <div className="flex flex-col w-full">
-                                <label htmlFor="shippingCity">City*</label>
+                            <div className="flex flex-row flex-wrap gap-10">
+                              <div className="flex flex-col">
+                                {/* <label htmlFor="shippingCity">City*</label> */}
                                 <Field
                                   type="text"
                                   id="shippingCity"
                                   name="shippingCity"
-                                  className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                  placeholder="City*"
+                                  className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 />
                                 <ErrorMessage
                                   name="shippingCity"
@@ -377,13 +406,14 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                                   className="text-red-500 text-xs"
                                 />
                               </div>
-                              <div className="flex flex-col w-full">
-                                <label htmlFor="shippingState">State*</label>
+                              <div className="flex flex-col">
+                                {/* <label htmlFor="shippingState">State*</label> */}
                                 <Field
                                   as="select"
                                   id="shippingState"
                                   name="shippingState"
-                                  className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                  placeholder="State*"
+                                  className="bg-gray-50 border text-sm h-11 rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-36 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                   onChange={(event) => {
                                     setFieldValue(
                                       "shippingState",
@@ -412,13 +442,14 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                                   className="text-red-500 text-xs"
                                 />
                               </div>
-                              <div className="flex flex-col w-full">
-                                <label htmlFor="shippingZip">Zip*</label>
+                              <div className="flex flex-col">
+                                {/* <label htmlFor="shippingZip">Zip*</label> */}
                                 <Field
                                   type="text"
                                   id="shippingZip"
                                   name="shippingZip"
-                                  className="py-3 px-4 block w-full border solid border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:focus:ring-gray-600"
+                                  placeholder="Zip*"
+                                  className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-28 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                 />
                                 <ErrorMessage
                                   name="shippingZip"
@@ -516,16 +547,19 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                         </div>
                       )}
 
-                      <div className="flex justify-end">
+                      <div className="modal-footer p-4 flex flex-row justify-between">
                         <button
+                          className="w-72 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                          onClick={handleClose}
                           type="button"
-                          className="btn btn-secondary mr-2"
-                          onClick={() => console.log("Cancel clicked")}
                         >
                           Cancel
                         </button>
-                        <button type="submit" className="btn btn-primary">
-                          Next
+                        <button
+                          type="submit"
+                          className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                        >
+                          Next : Order Device
                         </button>
                       </div>
                     </div>

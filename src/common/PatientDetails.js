@@ -78,6 +78,8 @@ const PatientDetails = ({
 }) => {
   const [modalOpen, setModalOpen] = useState(true);
   const [icd10Codes, setIcd10Codes] = useState([]);
+  const [icdArray, setIcdArray] = useState([]);
+  const [hasSelected, setHasSelected] = useState(false);
   const dispatch = useDispatch();
   const initialValues = {
     firstName: "",
@@ -94,7 +96,7 @@ const PatientDetails = ({
     contactVia: { phone: false, email: false },
     language: "English",
   };
-  const options = [
+  /*   const options = [
     { value: "ICD-1", label: "ICD-1" },
     { value: "ICD-2", label: "ICD-2" },
     { value: "ICD-3", label: "ICD-3" },
@@ -104,10 +106,17 @@ const PatientDetails = ({
     { value: "ICD-1", label: "ICD-1" },
     { value: "ICD-2", label: "ICD-2" },
     { value: "ICD-3", label: "ICD-3" },
-  ];
+  ]; */
+
   useEffect(() => {
+    let data = icdCodeData.codes;
+    let newArray = data.map((item) => ({
+      label: `${item.code} - ${item.description}`, // Create label based on code and description
+      value: item.code, // Use code as the value
+    }));
+    setIcdArray(newArray);
+
     setIcd10Codes(icdCodeData.codes);
-    console.log(icd10Codes, "are");
   }, [icdCodeData]);
 
   const handleSubmit = (values) => {
@@ -149,36 +158,39 @@ const PatientDetails = ({
             <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div className="relative bg-white rounded-lg p-8 w-max mx-auto">
+            <div className="relative bg-white rounded-lg p-4 w-max mx-auto">
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}
                 onSubmit={handleSubmit}
               >
                 {({ values, errors, touched, setFieldValue }) => (
-                  <Form className="flex flex-col gap-4">
-                    <div className="modal-footer p-4 flex flex-row justify-between">
+                  <Form className="flex flex-col gap-4 bg-[#f6f9fd] p-2 rounded-lg pl-8 pr-8">
+                    <div className=" flex flex-row justify-between">
                       <Link to="#" onClick={() => setEnrollStep(0)}>
                         <span aria-hidden="true">
                           <FontAwesomeIcon icon={faArrowLeft} color="#0e55aa" />
                         </span>{" "}
                         Go back
                       </Link>
-
-                      <button
-                        type="submit"
-                        className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
-                        //disabled={isSubmitting}
-                        onClick={(values) => handleSubmit(values)}
-                      >
-                        Next : Patient Details
-                      </button>
+                      <span className="font-medium">
+                        <span className="text-[#0e55aa] font-bold">
+                          Step {enrollStep}
+                        </span>
+                        / 04
+                      </span>
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <h1 className="flex justify-center text-xl font-medium">
+                        Patient Details
+                      </h1>
+                      <p className="text-sm">* indicates a required field</p>
                     </div>
                     {/* First Name & Last Name */}
                     <div className="flex flex-row gap-6 flex-wrap">
                       <div className="flex flex-col">
                         <Field
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className=" border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           type="text"
                           name="firstName"
                           id="firstName"
@@ -198,7 +210,7 @@ const PatientDetails = ({
                           id="lastName"
                           placeholder="Last Name"
                           aria-describedby="lastNameError"
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
                         <ErrorMessage
                           name="lastName"
@@ -209,7 +221,7 @@ const PatientDetails = ({
                     </div>
 
                     {/* DOB & Email */}
-                    <div className="flex flex-row justify-between mt-2">
+                    <div className="flex flex-row gap-6 flex-wrap mt-2">
                       <div className="flex flex-col">
                         <Field
                           type="date"
@@ -217,7 +229,7 @@ const PatientDetails = ({
                           id="dob"
                           placeholder="DOB"
                           aria-describedby="dobError"
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
                         <ErrorMessage
                           name="dob"
@@ -232,7 +244,7 @@ const PatientDetails = ({
                           id="patientEmail"
                           placeholder="Email"
                           aria-describedby="patientEmailError"
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         />
                         <ErrorMessage
                           name="patientEmail"
@@ -243,8 +255,10 @@ const PatientDetails = ({
                     </div>
 
                     {/* Country Code */}
-                    <div className="mt-4 bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                      <Field
+                    {/*  <div className="mt-4 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                     */}
+                    <div className="w-72 text-sm rounded-3xl">
+                      {/* <Field
                         as="select"
                         name="countryCode"
                         className="bg-transparent"
@@ -265,14 +279,41 @@ const PatientDetails = ({
                         name="countryCode"
                         component="div"
                         className="text-red-600"
-                      />
+                      /> */}
+
+                      <select
+                        id="countryCode"
+                        name="countryCode" // This should match the field name in your form values
+                        value={values.countryCode}
+                        onChange={(event) => {
+                          setFieldValue(
+                            "countryCode",
+                            event.target.value.trim()
+                          );
+                        }}
+                        className={`w-full mt-1 px-3 py-2 mb-2 text-black rounded-3xl border ${
+                          errors.countryCode && touched.countryCode
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                      >
+                        <option value="">Select a countryCode</option>
+
+                        <option value="+91">(+91) India</option>
+                        <option value="+1">(+1) United States</option>
+                      </select>
+                      {errors.countryCode && touched.countryCode && (
+                        <p className="text-red-500 text-xs">
+                          {errors.countryCode}
+                        </p>
+                      )}
                     </div>
 
                     {/* Phone Number and Home Number */}
                     <div className="flex flex-row justify-between mt-2">
                       <div className="flex-col">
                         <Field
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           type="number"
                           name="mobilePhone"
                           placeholder="Phone Number"
@@ -288,7 +329,7 @@ const PatientDetails = ({
                       </div>
                       <div className="flex-col">
                         <Field
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           type="number"
                           name="homePhone"
                           placeholder="Home Number"
@@ -296,7 +337,7 @@ const PatientDetails = ({
                         <ErrorMessage
                           name="homePhone"
                           component="div"
-                          className="text-red-600"
+                          className="text-red-600 text-xs"
                         />
                       </div>
                     </div>
@@ -304,9 +345,11 @@ const PatientDetails = ({
                     {/* Patient Consent */}
                     <div className="flex flex-row mt-5 gap-10">
                       <div>
-                        <fieldset className="flex flex-col">
-                          <p>Does patient consent to be contacted?</p>
-                          <div className="flex flex-row gap-5">
+                        <fieldset className="flex flex-col gap-3">
+                          <p className="text-black-700 font-[500]">
+                            Does patient consent to be contacted?
+                          </p>
+                          <div className="flex flex-row gap-10 justify-start">
                             <div>
                               <Field
                                 type="radio"
@@ -330,10 +373,12 @@ const PatientDetails = ({
                       </div>
                       <div>
                         {values.consent === "yes" && (
-                          <fieldset className="flex flex-col">
-                            <legend>Contact via</legend>
-                            <div className="flex flex-row gap-5">
-                              <div>
+                          <fieldset className="flex flex-col gap-3">
+                            <p className="text-black-700 font-[500]">
+                              Contact via
+                            </p>
+                            <div className="flex flex-row gap-10">
+                              <div className="flex flex-row gap-2">
                                 <Field
                                   type="checkbox"
                                   name="contactVia.email"
@@ -343,7 +388,7 @@ const PatientDetails = ({
                                 />
                                 <label htmlFor="contactEmail">Email</label>
                               </div>
-                              <div className="col-8">
+                              <div className="flex flex-row gap-2">
                                 <Field
                                   type="checkbox"
                                   name="contactVia.phone"
@@ -357,7 +402,7 @@ const PatientDetails = ({
                             <ErrorMessage
                               name="contactVia"
                               component="div"
-                              className="text-red-600"
+                              className="text-red-600 text-xs"
                             />
                           </fieldset>
                         )}
@@ -365,10 +410,10 @@ const PatientDetails = ({
                     </div>
 
                     {/* MRN & Gender */}
-                    <div className="flex flex-row mt-10 gap-5 flex-wrap">
-                      <div className="flex flex-col gap-10">
+                    <div className="flex flex-row mt-5 gap-5 flex-wrap">
+                      <div className="flex flex-col">
                         <Field
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                           type="text"
                           name="patientMRN"
                           id="patientMRN"
@@ -377,38 +422,49 @@ const PatientDetails = ({
                         <ErrorMessage
                           name="patientMRN"
                           component="div"
-                          className="text-red-600"
+                          className="text-red-600 text-xs"
                         />
                       </div>
                       <div className="flex flex-col">
-                        <div className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                          <Field
-                            as="select"
-                            name="gender"
-                            className="bg-transparent"
+                        <div className="w-72 text-sm rounded-3xl">
+                          <select
+                            id="gender"
+                            name="gender" // This should match the field name in your form values
+                            value={values.gender}
+                            onChange={(event) => {
+                              setFieldValue(
+                                "gender",
+                                event.target.value.trim()
+                              );
+                            }}
+                            className={`w-full mt-1 p-2.5 mb-2 text-black rounded-3xl border ${
+                              errors.gender && touched.gender
+                                ? "border-red-500"
+                                : "border-gray-300"
+                            }`}
                           >
-                            <option value="" disabled>
-                              Select Gender
-                            </option>
+                            <option value="">Select a gender</option>
+
                             <option value="M">Male</option>
                             <option value="F">Female</option>
                             <option value="O">Other</option>
-                          </Field>
+                          </select>
+                          {errors.gender && touched.gender && (
+                            <p className="text-red-500 text-xs">
+                              {errors.gender}
+                            </p>
+                          )}
                         </div>
-                        <ErrorMessage
-                          name="gender"
-                          component="div"
-                          className="text-red-600"
-                        />
                       </div>
                     </div>
 
                     {/* ICD code and Language */}
                     <div className="flex flex-row gap-5">
-                      <div className="rounded-lg">
+                      <div>
                         <Select
-                          className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          className="text-sm rounded-3xl w-72"
                           name="icdCodes"
+                          id="icdCodes"
                           onChange={(selectedOption) => {
                             setFieldValue(
                               "icdCodes",
@@ -416,24 +472,52 @@ const PatientDetails = ({
                                 ? selectedOption.map((option) => option.name)
                                 : []
                             );
+                            setHasSelected(true);
                           }}
-                          placeholder="Select ICD Codes"
-                          options={icd10Codes}
+                          placeholder="Select an ICD Code"
+                          options={icdArray}
                           isMulti
                           maxMenuHeight={220}
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              width: "full",
+                              padding: "4px",
+                              borderRadius: "25px",
+                              borderColor:
+                                !hasSelected && errors.touched
+                                  ? "red"
+                                  : "black",
+                              "&:hover": {
+                                borderColor: "black",
+                              },
+                            }),
+                            menu: (provided) => ({
+                              ...provided,
+                              maxHeight: 220, // Adjust this value as needed
+                            }),
+                          }}
                         />
-                        <ErrorMessage
-                          name="icdCodes"
-                          component="div"
-                          className="text-red-600"
-                        />
+
+                        {!hasSelected && errors.touched && errors.icdCodes && (
+                          <p className="text-red-500 text-xs">
+                            {errors.icdCodes}
+                          </p>
+                        )}
+                        {/* {!hasSelected && (
+                          <ErrorMessage
+                            name="icdCodes"
+                            component="div"
+                            className="text-red-600 text-xs"
+                          />
+                        )} */}
                       </div>
-                      <div className="flex flex-col mt-5 gap-5">
+                      <div className="flex flex-col  gap-5">
                         <div>
                           <fieldset className="flex flex-col">
-                            <p>Choose Language</p>
+                            <p className="font-medium">Choose Language</p>
                             <div className="flex flex-row gap-5">
-                              <div>
+                              <div className="flex flex-row gap-1">
                                 <Field
                                   type="radio"
                                   name="language"
@@ -442,7 +526,7 @@ const PatientDetails = ({
                                 />
                                 <label htmlFor="english">English</label>
                               </div>
-                              <div>
+                              <div className="flex flex-row gap-1">
                                 <Field
                                   type="radio"
                                   name="language"
@@ -451,7 +535,7 @@ const PatientDetails = ({
                                 />
                                 <label htmlFor="spanish">Spanish</label>
                               </div>
-                              <div>
+                              <div className="flex flex-row gap-1">
                                 <Field
                                   type="radio"
                                   name="language"
@@ -465,13 +549,13 @@ const PatientDetails = ({
                           <ErrorMessage
                             name="language"
                             component="div"
-                            className="text-red-600"
+                            className="text-red-600 text-xs"
                           />
                         </div>
                         <div>
                           {values.language === "other" && (
                             <Field
-                              className="bg-gray-50 border text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500  w-80 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                              className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
                               type="text"
                               name="otherLanguage"
                               id="otherLanguage"
