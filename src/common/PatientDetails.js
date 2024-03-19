@@ -11,6 +11,9 @@ import moment from "moment/moment.js";
 import "../css/IcdCodes.css";
 import { useDispatch } from "react-redux";
 import { addPatientDetails } from "../store/reducers/enrollPatientReducer.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()
@@ -143,10 +146,7 @@ const PatientDetails = ({
       {modalOpen && enrollStep === 1 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={handleClose}
-            >
+            <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
             <div className="relative bg-white rounded-lg p-8 w-max mx-auto">
@@ -157,6 +157,23 @@ const PatientDetails = ({
               >
                 {({ values, errors, touched, setFieldValue }) => (
                   <Form className="flex flex-col gap-4">
+                    <div className="modal-footer p-4 flex flex-row justify-between">
+                      <Link to="#" onClick={() => setEnrollStep(0)}>
+                        <span aria-hidden="true">
+                          <FontAwesomeIcon icon={faArrowLeft} color="#0e55aa" />
+                        </span>{" "}
+                        Go back
+                      </Link>
+
+                      <button
+                        type="submit"
+                        className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                        //disabled={isSubmitting}
+                        onClick={(values) => handleSubmit(values)}
+                      >
+                        Next : Patient Details
+                      </button>
+                    </div>
                     {/* First Name & Last Name */}
                     <div className="flex flex-row gap-6 flex-wrap">
                       <div className="flex flex-col">
@@ -464,7 +481,21 @@ const PatientDetails = ({
                         </div>
                       </div>
                     </div>
-                    <button type="submit">Next</button>
+                    <div className="modal-footer p-4 flex flex-row justify-between">
+                      <button
+                        className="w-72 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                        onClick={handleClose}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                      >
+                        Next : Patient Address
+                      </button>
+                    </div>
                   </Form>
                 )}
               </Formik>

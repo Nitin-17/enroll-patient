@@ -160,10 +160,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
       {modalOpen && enrollStep === 2 && isClicked && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={handleClose}
-            >
+            <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
             <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">

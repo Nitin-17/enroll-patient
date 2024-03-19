@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
@@ -17,7 +17,10 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPhysician, setSelectedPhysician] = useState("");
   const [showPhysicianList, setShowPhysicianList] = useState(false);
+
+  const [hasSelected, setHasSelected] = useState(false);
   const dispatch = useDispatch();
+  const modalRef = useRef();
 
   const validationSchema = Yup.object().shape({
     location: Yup.string().required("Location is required"),
@@ -59,6 +62,7 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
     setSelectedLocation(selectedOption);
     setSelectedDepartment("");
     setSelectedPhysician("");
+    setHasSelected(true);
     //setShowPhysicianList(false);
   };
 
@@ -85,37 +89,53 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
     setEnrollStep(1);
   };
 
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setModalOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       {modalOpen && enrollStep === 0 && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen p-4">
-            <div
-              className="fixed inset-0 transition-opacity"
-              onClick={handleClose}
-            >
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            <div className="fixed inset-0 transition-opacity">
+              <div className="absolute inset-0 bg-black opacity-75"></div>
             </div>
-            <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">
+            <div className="relative bg-white rounded-lg p-6 w-9/12 mx-auto">
               <Formik
                 initialValues={initialValues}
-                //validationSchema={validationSchema}
-                onSubmit={(values) => {
+                validationSchema={validationSchema}
+                /* onSubmit={(values) => {
                   console.log("called", values);
                   handleSubmit(values);
                   // setSubmitting(false);
-                }}
+                }} */
               >
                 {({ errors, touched, isSubmitting, values }) => (
-                  <Form>
-                    <div className="w-full flex flex-col gap-6">
-                      <h1 className="mb-4 flex justify-center text-xl">
-                        Enroll Patient(s)
-                      </h1>
-                      <p>Please provide the information below:</p>
+                  <Form className="bg-[#f6f9fd] p-2 rounded-lg">
+                    <div className="w-full flex flex-col gap-6 p-6">
+                      <div className="flex flex-col gap-1">
+                        <h1 className="mb-4 flex justify-center text-xl font-medium">
+                          Enroll Patient(s)
+                        </h1>
+                        <p className="font-medium text-sm">
+                          Please provide the information below:
+                        </p>
+                      </div>
                       <div className="rounded-lg">
                         <Select
+                          aria-label="select location"
                           name="location"
+                          classNamePrefix="react-select"
                           value={selectedLocation}
                           onChange={onChangeLocation}
                           placeholder="Select a Location"
@@ -123,9 +143,21 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                             label: hospital.name,
                             value: hospital.hospitalID,
                           }))}
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              borderRadius: "15px",
+                              borderColor: hasSelected ? "red" : "black",
+                              "&:hover": {
+                                borderColor: "black",
+                              },
+                            }),
+                          }}
                         />
                         {touched.location && errors.location && (
-                          <div className="text-red-500">{errors.location}</div>
+                          <div className="text-red-500 text-xs font-medium text-center">
+                            {errors.location}
+                          </div>
                         )}
                       </div>
                       <div className="rounded-lg">
@@ -138,9 +170,18 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                             label: hospital.name,
                             value: hospital.hospitalID,
                           }))}
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              borderRadius: "15px",
+                              "&:hover": {
+                                borderColor: "black",
+                              },
+                            }),
+                          }}
                         />
                         {touched.department && errors.department && (
-                          <div className="text-red-500">
+                          <div className="text-red-500 text-xs font-medium text-center">
                             {errors.department}
                           </div>
                         )}
@@ -161,16 +202,27 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                                 }))
                               : []
                           }
+                          styles={{
+                            control: (baseStyles, state) => ({
+                              ...baseStyles,
+                              borderRadius: "15px",
+                              "&:hover": {
+                                borderColor: "black",
+                              },
+                            }),
+                          }}
                         />
                         {touched.physician && errors.physician && (
-                          <div className="text-red-500">{errors.physician}</div>
+                          <div className="text-red-500 text-xs font-medium text-center">
+                            {errors.physician}
+                          </div>
                         )}
                       </div>
                     </div>
 
-                    <div className="modal-footer p-4">
+                    <div className="modal-footer p-4 flex flex-row justify-between">
                       <button
-                        className="w-32 rounded-full bg-cyan-400 border-2 p-1 text-sm justify-center"
+                        className="w-72 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                         onClick={handleClose}
                         type="button"
                       >
@@ -178,11 +230,11 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                       </button>
                       <button
                         type="submit"
-                        className="w-fit rounded-full bg-cyan-400 border-2 p-2 text-sm justify-center"
+                        className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                         //disabled={isSubmitting}
-                        //onClick={(values = handleSubmit(values))}
+                        onClick={(values) => handleSubmit(values)}
                       >
-                        Next:Patient Details
+                        Next : Patient Details
                       </button>
                     </div>
                   </Form>
