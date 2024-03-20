@@ -11,18 +11,31 @@ import { Link } from "react-router-dom";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
+  const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedBpDevice, setSelectedBpDevice] = useState(null);
-  const [selectedWeightDevice, setSelectedWeightDevice] = useState(null);
-  const [cuffSize, setCuffSize] = useState("Small");
-  const [weightDevice, setWeightDevice] = useState("Small");
+  const [selectedBpDevice, setSelectedBpDevice] = useState(
+    patientEnrollDetails?.patientDevice?.bpDevice || null
+  );
+  const [selectedWeightDevice, setSelectedWeightDevice] = useState(
+    patientEnrollDetails?.patientDevice?.weightDevice || null
+  );
+  const [cuffSize, setCuffSize] = useState(
+    patientEnrollDetails?.patientDevice?.bpDevice || "Small"
+  );
+  const [weightDevice, setWeightDevice] = useState(
+    patientEnrollDetails?.patientDevice?.weightDevice || "Small"
+  );
   const [errorMessage, setErrorMessage] = useState(false);
-  const [isBpChecked, setIsBpChecked] = useState(false);
-  const [isWeightChecked, setIsWeightChecked] = useState(false);
+  const [isBpChecked, setIsBpChecked] = useState(
+    patientEnrollDetails?.patientDevice?.bpChecked || false
+  );
+  const [isWeightChecked, setIsWeightChecked] = useState(
+    patientEnrollDetails?.patientDevice?.weightChecked || false
+  );
   const [supportedDevices, setSupportedDevices] = useState([]);
   const dispatch = useDispatch();
-  //const [params, setParams] = useState({});
+  console.log("devices details", patientEnrollDetails);
 
   useEffect(() => {
     if (hospitalData && hospitalData?.supportedDevices?.length > 0) {
@@ -110,7 +123,7 @@ const PatientDevices = ({ hospitalData, setEnrollStep, enrollStep }) => {
             <div className="relative bg-white rounded-lg p-4 w-9/12 mx-auto">
               <div className="flex flex-col gap-4 bg-[#f6f9fd] p-2 rounded-lg pl-8 pr-8">
                 <div className=" flex flex-row justify-between">
-                  <Link to="#" onClick={() => setEnrollStep(0)}>
+                  <Link to="#" onClick={() => setEnrollStep(2)}>
                     <span aria-hidden="true">
                       <FontAwesomeIcon icon={faArrowLeft} color="#0e55aa" />
                     </span>{" "}

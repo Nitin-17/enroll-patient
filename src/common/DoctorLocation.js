@@ -110,7 +110,7 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
             <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-black opacity-75"></div>
             </div>
-            <div className="relative bg-white rounded-lg p-6 w-9/12 mx-auto">
+            <div className="relative bg-white rounded-lg p-6">
               <Formik
                 initialValues={initialValues}
                 validationSchema={validationSchema}

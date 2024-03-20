@@ -11,6 +11,7 @@ import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
+  const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const [modalOpen, setModalOpen] = useState(true);
   const [showShippingAddress, setShowShippingAddress] = useState(false);
   const [suggestedAddresses, setSuggestedAddresses] = useState([]);
@@ -21,6 +22,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
   const [whichAddress, setWhichAddress] = useState("");
   const [whichSuggestedAddress, setWhichSuggestedAddress] = useState(0);
   const [params, setParams] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -55,6 +57,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
     setAddressErrorMessage("");
     setSuggestedAddresses("");
     if (whichAddress === "") {
+      setIsLoading(true);
       const response = dispatch(
         verifyAddressAction({ address: addressDetails })
       );
@@ -66,14 +69,17 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
             console.log("sugggg", response.data.candidate);
             setEnteredAddress(values);
             console.log("response is", response);
+            setIsLoading(false);
             //params.suggestedAddresses = response.data.candidate;
           } else {
             setAddressErrorMessage(response.message);
             console.log(response);
+            setIsLoading(false);
           }
         })
         .catch((error) => {
           console.log("error address is", error);
+          setIsLoading(false);
         });
     }
     if (whichAddress !== "" && whichAddress === "enteredAddress") {
@@ -87,9 +93,15 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
       setWhichAddress("");
     }
     if (whichAddress !== "" && whichAddress === "suggestedAddress") {
-      setSuggestedAddresses([]);
-
-      dispatch(addPatientAddress(whichSuggestedAddress));
+      //setSuggestedAddresses([]);
+      console.log("whichSuggestedAddress", whichSuggestedAddress);
+      dispatch(
+        addPatientAddress({
+          suggestedAddress: suggestedAddresses[whichSuggestedAddress],
+          enteredAddress: enteredAddress,
+          addressReceived: addressReceived,
+        })
+      );
       setEnrollStep(3);
       setWhichAddress("");
     } else {
@@ -100,7 +112,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
       //console.log("nexttttt");
       //setEnrollStep(3);
     }
-    // setEnrollStep(3);
+    //setEnrollStep(3);
   };
 
   const validationSchema = Yup.object().shape({
@@ -172,14 +184,16 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
             <div className="fixed inset-0 transition-opacity">
               <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-            <div className="relative bg-white rounded-lg p-4 w-9/12 mx-auto">
+            <div className="relative bg-white rounded-lg p-4 ">
               <Formik
                 initialValues={{
-                  addressLine1: "",
-                  addressLine2: "",
-                  city: "",
-                  state: "",
-                  zip: "",
+                  addressLine1:
+                    patientEnrollDetails?.patientAddress?.addressLine1 || "",
+                  addressLine2:
+                    patientEnrollDetails?.patientAddress?.addressLine2 || "",
+                  city: patientEnrollDetails?.patientAddress?.city || "",
+                  state: patientEnrollDetails?.patientAddress?.state || "",
+                  zip: patientEnrollDetails?.patientAddress?.zip || "",
                   shippingAddressLine1: "",
                   shippingAddressLine2: "",
                   shippingCity: "",
@@ -226,6 +240,14 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                               name="addressLine1"
                               placeholder="Address Line 1*"
                               className="bg-gray-50 border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                              onChange={(e) => {
+                                setFieldValue(
+                                  "addressLine1",
+                                  e.target.value.trimStart()
+                                );
+                                setWhichAddress("");
+                                //setSuggestedAddresses([]);
+                              }}
                             />
                             <ErrorMessage
                               name="addressLine1"
@@ -322,7 +344,7 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                       </div>
 
                       <div className="mt-4">
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center gap-2">
                           <Field
                             type="checkbox"
                             id="useShippingAddress"
@@ -476,79 +498,78 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                       )}
 
                       {suggestedAddresses && suggestedAddresses.length > 0 && (
-                        <div className="flex flex-col gap-4 ">
+                        <div className="flex flex-col flex-wrap gap-4 w-[600px]">
                           <div className="text dark:bg-slate-400 p-2 border-1 rounded-sm solid border-black-800">
                             We have a suggestion for the{" "}
                             {showShippingAddress ? "shipping" : "primary"}{" "}
                             address you entered. If correct, please choose the
                             suggested address to ensure accurate delivery.
                           </div>
-                          <div>
-                            <div class="grid sm:grid-cols-2 gap-2">
-                              <label
-                                for="hs-radio-in-form-enter"
-                                class="flex p-3 w-full bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  dark:border-gray-700 dark:text-gray-400"
-                              >
-                                <input
-                                  type="radio"
-                                  name="hs-radio-in-form"
-                                  class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none  dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                                  id="hs-radio-in-form-enter"
-                                />
-                                <span
-                                  class="text-sm text-gray-500 ms-3 dark:text-gray-400"
-                                  onClick={() =>
-                                    //setFinalAddress(enteredAddress)
-                                    {
-                                      setWhichAddress("enteredAddress");
-                                    }
+
+                          <div class="flex flex-row flex-wrap gap-2">
+                            <label
+                              for="hs-radio-in-form-enter"
+                              class="flex p-3 w-64 bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  dark:border-gray-700 dark:text-gray-400"
+                            >
+                              <input
+                                type="radio"
+                                name="hs-radio-in-form"
+                                class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none  dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                                id="hs-radio-in-form-enter"
+                              />
+                              <span
+                                class="text-sm text-gray-500 ms-3 dark:text-gray-400"
+                                onClick={() =>
+                                  //setFinalAddress(enteredAddress)
+                                  {
+                                    setWhichAddress("enteredAddress");
                                   }
-                                >
-                                  <div className="font-medium text-black">
-                                    Address entered
-                                  </div>
-                                  <div>{`${enteredAddress.addressLine1}`}</div>
-                                  {`
+                                }
+                              >
+                                <div className="font-medium text-black">
+                                  Address entered
+                                </div>
+                                <div>{`${enteredAddress.addressLine1}`}</div>
+                                {`
                                   ${enteredAddress?.addressLine2}
                                   ${enteredAddress.city},
                                  ${enteredAddress.state}
                                   ${enteredAddress.zip}`}
-                                </span>
-                              </label>
+                              </span>
+                            </label>
 
-                              {/* Suggested Address RadioBox */}
-                              {suggestedAddresses &&
-                                suggestedAddresses.length > 0 &&
-                                suggestedAddresses.map((suggested, index) => {
-                                  return (
-                                    <label
-                                      for="hs-radio-in-form-sugg"
-                                      class="flex p-3 w-full bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  dark:border-gray-700 dark:text-gray-400"
+                            {/* Suggested Address RadioBox */}
+                            {suggestedAddresses &&
+                              suggestedAddresses.length > 0 &&
+                              suggestedAddresses.map((suggested, index) => {
+                                return (
+                                  <label
+                                    for="hs-radio-in-form-sugg"
+                                    class="flex p-3 w-64 bg-white border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500  dark:border-gray-700 dark:text-gray-400"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name="hs-radio-in-form"
+                                      class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none  dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
+                                      id="hs-radio-in-form-sugg"
+                                    />
+                                    <span
+                                      class="text-sm text-gray-500 ms-3 dark:text-gray-400"
+                                      onClick={() => {
+                                        setWhichSuggestedAddress(index);
+                                        setWhichAddress("suggestedAddress");
+                                      }}
                                     >
-                                      <input
-                                        type="radio"
-                                        name="hs-radio-in-form"
-                                        class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none  dark:border-gray-700 dark:checked:bg-blue-500 dark:checked:border-blue-500 dark:focus:ring-offset-gray-800"
-                                        id="hs-radio-in-form-sugg"
-                                      />
-                                      <span
-                                        class="text-sm text-gray-500 ms-3 dark:text-gray-400"
-                                        onClick={() => {
-                                          setWhichSuggestedAddress(index);
-                                          setWhichAddress("suggestedAddress");
-                                        }}
-                                      >
-                                        <div className="font-medium text-black">
-                                          Address Suggested
-                                        </div>
-                                        <div>{`${suggested?.AddressKeyFormat?.AddressLine}`}</div>
-                                        {`
+                                      <div className="font-medium text-black">
+                                        Address Suggested
+                                      </div>
+                                      <div>{`${suggested?.AddressKeyFormat?.AddressLine}`}</div>
+                                      {`
                                   ${suggested?.AddressKeyFormat?.Region}`}
-                                      </span>
-                                    </label>
-                                  );
-                                })}
-                            </div>
+                                    </span>
+                                  </label>
+                                );
+                              })}
                           </div>
                         </div>
                       )}
@@ -561,11 +582,25 @@ const PatientAddress = ({ enrollStep, isClicked, setEnrollStep }) => {
                         >
                           Cancel
                         </button>
-                        <button
+                        {/* <button
                           type="submit"
                           className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                         >
                           Next : Order Device
+                        </button> */}
+                        <button
+                          type="submit"
+                          className="w-72 rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                          disabled={isLoading} // Disable the button when loading
+                        >
+                          {isLoading ? (
+                            <div className="flex justify-center items-center">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                              <span className="ml-2">Next : Order Device</span>
+                            </div>
+                          ) : (
+                            "Next : Order Device"
+                          )}
                         </button>
                       </div>
                     </div>

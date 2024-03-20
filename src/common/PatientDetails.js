@@ -9,40 +9,41 @@ import {
 } from "../helper/utils.js";
 import moment from "moment/moment.js";
 import "../css/IcdCodes.css";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addPatientDetails } from "../store/reducers/enrollPatientReducer.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 
-const validationSchema = Yup.object().shape({
-  firstName: Yup.string()
-    .required("First Name is required")
-    .matches(/^[a-z0-9 .'-]+$/i, "First Name is not valid")
-    .min(3, "First Name should have at least 3 characters")
-    .max(50, "First Name should not exceed 50 characters"),
-  lastName: Yup.string()
-    .required("Last Name is required")
-    .matches(/^[a-z0-9 .'-]+$/i, "Last Name is not valid"),
-  dob: Yup.string().nullable().required("Enter dob"),
-  patientEmail: Yup.string().email("Enter a valid Patient Email").required(),
-  consent: Yup.string().required("Enter select consent"),
-  mobilePhone: Yup.string()
-    .required("Phone number is required")
-    .min(10, "Mobile Phone should have at least 10 digit")
-    .max(10, "Mobile Phone should not exceed 10 digit"),
-  homePhone: Yup.string()
-    .min(10, "Home Phone should have at least 10 digit")
-    .max(10, "Home Phone should not exceed 10 digit"),
-  patientMRN: Yup.string()
-    .optional()
-    .required("Patient MRN")
-    .matches(/^[a-zA-Z0-9 ]+$/, "MRN is not valid")
-    .min(3, "MRN should have at least 3 characters")
-    .max(50, "MRN should not exceed 50 characters"),
-  gender: Yup.string().required("Select a Gender"),
-  countryCode: Yup.string().required("Select country code"),
-  /*  language: Yup.string().when("language", {
+const validationSchema = Yup.object()
+  .shape({
+    firstName: Yup.string()
+      .required("First Name is required")
+      .matches(/^[a-z0-9 .'-]+$/i, "First Name is not valid")
+      .min(3, "First Name should have at least 3 characters")
+      .max(50, "First Name should not exceed 50 characters"),
+    lastName: Yup.string()
+      .required("Last Name is required")
+      .matches(/^[a-z0-9 .'-]+$/i, "Last Name is not valid"),
+    dob: Yup.string().nullable().required("Enter dob"),
+    patientEmail: Yup.string().email("Enter a valid Patient Email"),
+    consent: Yup.string().required("Enter select consent"),
+    mobilePhone: Yup.string()
+      .required("Phone number is required")
+      .min(10, "Mobile Phone should have at least 10 digit")
+      .max(10, "Mobile Phone should not exceed 10 digit"),
+    homePhone: Yup.string()
+      .min(10, "Home Phone should have at least 10 digit")
+      .max(10, "Home Phone should not exceed 10 digit"),
+    patientMRN: Yup.string()
+      .optional()
+      .required("Patient MRN")
+      .matches(/^[a-zA-Z0-9 ]+$/, "MRN is not valid")
+      .min(3, "MRN should have at least 3 characters")
+      .max(50, "MRN should not exceed 50 characters"),
+    gender: Yup.string().required("Select a Gender"),
+    countryCode: Yup.string().required("Select country code"),
+    /*  language: Yup.string().when("language", {
     is: (val) => val === "other",
     then: Yup.string()
       .required("Other Language")
@@ -51,24 +52,33 @@ const validationSchema = Yup.object().shape({
       .max(30, "Other Language should not exceed 30 characters"),
     otherwise: Yup.string().notRequired(),
   }), */
-  language: Yup.string().required("Select language"),
-  icdCodes: Yup.array().required("ICD-10 Code is required"),
-  contactVia: Yup.lazy((value) => {
-    if (value && value.consent === "yes") {
-      return Yup.object()
-        .shape({
-          email: Yup.boolean(),
-          phone: Yup.boolean(),
-        })
-        .test(
-          "at-least-one",
-          "Please select at least one contact option",
-          (value) => value.email || value.phone
-        );
+    language: Yup.string().required("Select language"),
+    icdCodes: Yup.array().required("ICD-10 Code is required"),
+    contactVia: Yup.lazy((value) => {
+      if (value && value.consent === "yes") {
+        return Yup.object()
+          .shape({
+            email: Yup.boolean(),
+            phone: Yup.boolean(),
+          })
+          .test(
+            "at-least-one",
+            "Please select at least one contact option",
+            (value) => value.email || value.phone
+          );
+      }
+      return Yup.object().notRequired();
+    }),
+  })
+  .test("myCustomTest", null, (obj) => {
+    if (obj.consent === "yes" && obj.contactVia?.email && !obj.patientEmail) {
+      return new Yup.ValidationError(
+        "Patient Email is required when selecting email contact",
+        null,
+        "patientEmail"
+      );
     }
-    return Yup.object().notRequired();
-  }),
-});
+  });
 
 const PatientDetails = ({
   enrollStep,
@@ -76,25 +86,29 @@ const PatientDetails = ({
   setEnrollStep,
   icdCodeData,
 }) => {
+  const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const [modalOpen, setModalOpen] = useState(true);
   const [icd10Codes, setIcd10Codes] = useState([]);
   const [icdArray, setIcdArray] = useState([]);
   const [hasSelected, setHasSelected] = useState(false);
   const dispatch = useDispatch();
   const initialValues = {
-    firstName: "",
-    lastName: "",
-    patientEmail: "",
-    dob: "",
-    countryCode: "+1",
-    mobilePhone: "",
-    homePhone: "",
-    consent: "no",
-    patientMRN: "",
-    gender: "",
+    firstName: patientEnrollDetails?.patientDetails?.firstName || "",
+    lastName: patientEnrollDetails?.patientDetails?.lastName || "",
+    patientEmail: patientEnrollDetails?.patientDetails?.patientEmail || "",
+    dob: patientEnrollDetails?.patientDetails?.patientDob || "",
+    countryCode: patientEnrollDetails?.patientDetails?.countryCode || "+1",
+    mobilePhone: patientEnrollDetails?.patientDetails?.mobilePhone || "",
+    homePhone: patientEnrollDetails?.patientDetails?.homePhone || "",
+    consent: patientEnrollDetails?.patientDetails?.consent || "no",
+    patientMRN: patientEnrollDetails?.patientDetails?.patientMRN || "",
+    gender: patientEnrollDetails?.patientDetails?.gender || "",
     icdCodes: [],
-    contactVia: { phone: false, email: false },
-    language: "English",
+    contactVia: {
+      phone: patientEnrollDetails?.patientDetails?.contactVai.phone || false,
+      email: patientEnrollDetails?.patientDetails?.contactVai.email || false,
+    },
+    language: patientEnrollDetails?.patientDetails?.languages || "English",
   };
   /*   const options = [
     { value: "ICD-1", label: "ICD-1" },

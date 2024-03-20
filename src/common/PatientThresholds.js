@@ -13,12 +13,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 
 const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
+  const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const [modalOpen, setModalOpen] = useState(true);
-  const [showAll, setShowAll] = useState(false);
-  const [checked7Days, setChecked7Days] = useState(false);
-  const [checked10Readings, setChecked10Reading] = useState(false);
-
-  const [params, setParams] = useState({});
+  const [showAll, setShowAll] = useState(
+    patientEnrollDetails?.patientThresholds?.isShowAllChecked
+  );
+  const [checked7Days, setChecked7Days] = useState(
+    patientEnrollDetails?.patientThresholds?.bpAverage["7day"]
+      ? patientEnrollDetails.patientThresholds.bpAverage["7day"]
+      : false
+  );
+  const [checked10Readings, setChecked10Reading] = useState(
+    patientEnrollDetails?.patientThresholds?.bpAverage["10readings"]
+      ? patientEnrollDetails.patientThresholds.bpAverage["10readings"]
+      : false
+  );
 
   const dispatch = useDispatch();
 
@@ -43,6 +52,7 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
         "10readings": checked10Readings ? 1 : 0,
         "7day": checked7Days ? 1 : 0,
       },
+      isShowAllChecked: showAll,
     };
     console.log(data);
     dispatch(addPatientThresholds(data));
@@ -153,16 +163,34 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
             <div className="relative bg-white rounded-lg p-8 w-9/12 mx-auto">
               <Formik
                 initialValues={{
-                  systolicHighSingle: "",
-                  systolicLowSingle: "",
-                  diastolicHighSingle: "",
-                  diastolicLowSingle: "",
-                  systolicHighAverage: "",
-                  systolicLowAverage: "",
-                  diastolicHighAverage: "",
-                  diastolicLowAverage: "",
-                  weightGain24: "",
-                  weightGain72: "",
+                  systolicHighSingle:
+                    patientEnrollDetails?.patientThresholds?.sysUpperLimit ||
+                    "",
+                  systolicLowSingle:
+                    patientEnrollDetails?.patientThresholds?.sysLowerLimit ||
+                    "",
+                  diastolicHighSingle:
+                    patientEnrollDetails?.patientThresholds?.diaUpperLimit ||
+                    "",
+                  diastolicLowSingle:
+                    patientEnrollDetails?.patientThresholds?.diaLowerLimit ||
+                    "",
+                  systolicHighAverage:
+                    patientEnrollDetails?.patientThresholds?.sysUpperAverage ||
+                    "",
+                  systolicLowAverage:
+                    patientEnrollDetails?.patientThresholds?.sysLowerAverage ||
+                    "",
+                  diastolicHighAverage:
+                    patientEnrollDetails?.patientThresholds?.diaUpperAverage ||
+                    "",
+                  diastolicLowAverage:
+                    patientEnrollDetails?.patientThresholds?.diaLowerAverage ||
+                    "",
+                  weightGain24:
+                    patientEnrollDetails?.patientThresholds?.weight24 || "",
+                  weightGain72:
+                    patientEnrollDetails?.patientThresholds?.weight72 || "",
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {

@@ -26,7 +26,7 @@ const EditDetails = ({ enrollStep, isClicked, setEnrollStep }) => {
   };
 
   const handleEditDetails = () => {
-    setEnrollStep(0);
+    setEnrollStep(3);
   };
 
   return (
@@ -87,13 +87,13 @@ const EditDetails = ({ enrollStep, isClicked, setEnrollStep }) => {
                         Contact Via
                       </label>
                       <p className="text-gray-700">
-                        {patientEnrollDetails.patientDetails.contactVai.phone
+                        {/* {patientEnrollDetails.patientDetails.contactVai.phone
                           ? "Phone"
-                          : ""}
+                          : ""} */}
 
-                        {patientEnrollDetails.patientDetails.contactVai.email
+                        {/*  {patientEnrollDetails.patientDetails.contactVai.email
                           ? "Email"
-                          : ""}
+                          : ""} */}
                       </p>
                     </div>
 

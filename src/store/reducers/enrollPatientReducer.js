@@ -10,9 +10,9 @@ const initialState = {
   },
   patientEnrollDetails: {
     doctorLocation: [],
-    patientDetails: [],
-    patientAddress: [],
-    patientThresholds: [],
+    patientDetails: {},
+    patientAddress: {},
+    patientThresholds: {},
     patientDevice: [],
   },
   suggestedAddress: {},
@@ -204,7 +204,7 @@ const doctorDataSlice = createSlice({
       );
     },
     addPatientThresholds: (state, action) => {
-      state.patientEnrollDetails.patientThresholds.push(action.payload);
+      state.patientEnrollDetails.patientThresholds = action.payload;
       console.log(
         "state.patientEnrollDetails.patientThresholds",
         state.patientEnrollDetails.patientThresholds
