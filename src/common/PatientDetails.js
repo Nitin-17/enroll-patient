@@ -96,7 +96,13 @@ const PatientDetails = ({
     firstName: patientEnrollDetails?.patientDetails?.firstName || "",
     lastName: patientEnrollDetails?.patientDetails?.lastName || "",
     patientEmail: patientEnrollDetails?.patientDetails?.patientEmail || "",
-    dob: patientEnrollDetails?.patientDetails?.patientDob || "",
+    dob: moment(patientEnrollDetails?.patientDetails?.dob, "MM-DD-YYYY").format(
+      "YYYY-MM-DD"
+    ),
+    // dob:
+    //   (patientEnrollDetails?.patientDetails?.dob &&
+    //     new Date(patientEnrollDetails.patientDetails.dob)) ||
+    //   new Date("01/01/1970"),
     countryCode: patientEnrollDetails?.patientDetails?.countryCode || "+1",
     mobilePhone: patientEnrollDetails?.patientDetails?.mobilePhone || "",
     homePhone: patientEnrollDetails?.patientDetails?.homePhone || "",
@@ -105,8 +111,12 @@ const PatientDetails = ({
     gender: patientEnrollDetails?.patientDetails?.gender || "",
     icdCodes: [],
     contactVia: {
-      phone: patientEnrollDetails?.patientDetails?.contactVai.phone || false,
-      email: patientEnrollDetails?.patientDetails?.contactVai.email || false,
+      phone: patientEnrollDetails?.patientDetails?.contactVai?.phone
+        ? patientEnrollDetails?.patientDetails?.contactVai.phone
+        : false,
+      email: patientEnrollDetails?.patientDetails?.contactVai?.email
+        ? patientEnrollDetails?.patientDetails?.contactVai.email
+        : false,
     },
     language: patientEnrollDetails?.patientDetails?.languages || "English",
   };
@@ -397,8 +407,8 @@ const PatientDetails = ({
                                   type="checkbox"
                                   name="contactVia.email"
                                   id="contactEmail"
-                                  value={values.contactVai?.email}
-                                  checked={values.contactVai?.email}
+                                  value={values.contactVia?.email}
+                                  checked={values.contactVia?.email}
                                 />
                                 <label htmlFor="contactEmail">Email</label>
                               </div>
@@ -407,17 +417,23 @@ const PatientDetails = ({
                                   type="checkbox"
                                   name="contactVia.phone"
                                   id="contactPhone"
-                                  value={values.contactVai?.phone}
-                                  checked={values.contactVai?.phone}
+                                  value={values.contactVia?.phone}
+                                  checked={values.contactVia?.phone}
                                 />
                                 <label htmlFor="contactPhone">Text</label>
                               </div>
                             </div>
-                            <ErrorMessage
-                              name="contactVia"
-                              component="div"
-                              className="text-red-600 text-xs"
-                            />
+                            {values.consent &&
+                              values.contactVia.email === false && (
+                                <p
+                                  name="contactVia"
+                                  component="div"
+                                  className="text-red-600 text-xs"
+                                  p
+                                >
+                                  Select at least one option
+                                </p>
+                              )}
                           </fieldset>
                         )}
                       </div>
