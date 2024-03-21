@@ -14,6 +14,7 @@ import { addPatientDetails } from "../store/reducers/enrollPatientReducer.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import IcdDropdown from "../modules/icdDropdown/IcdDropdown.js";
 
 const validationSchema = Yup.object()
   .shape({
@@ -88,7 +89,7 @@ const PatientDetails = ({
 }) => {
   const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const [modalOpen, setModalOpen] = useState(true);
-  const [icd10Codes, setIcd10Codes] = useState([]);
+  const [icd10Groups, setIcd10Groups] = useState([]);
   const [icdArray, setIcdArray] = useState([]);
   const [hasSelected, setHasSelected] = useState(false);
   const dispatch = useDispatch();
@@ -133,14 +134,17 @@ const PatientDetails = ({
   ]; */
 
   useEffect(() => {
+    console.log("Datta------------", icdCodeData);
     let data = icdCodeData.codes;
-    let newArray = data.map((item) => ({
-      label: `${item.code} - ${item.description}`, // Create label based on code and description
-      value: item.code, // Use code as the value
-    }));
-    setIcdArray(newArray);
+    if (data) {
+      let newArray = data.map((item) => ({
+        label: `${item.code} - ${item.description}`, // Create label based on code and description
+        value: item.code, // Use code as the value
+      }));
+      setIcdArray(newArray);
 
-    setIcd10Codes(icdCodeData.codes);
+      setIcd10Groups(icdCodeData.groups);
+    }
   }, [icdCodeData]);
 
   const handleSubmit = (values) => {
@@ -491,7 +495,7 @@ const PatientDetails = ({
                     {/* ICD code and Language */}
                     <div className="flex flex-row gap-5">
                       <div>
-                        <Select
+                        {/* <Select
                           className="text-sm rounded-3xl w-72"
                           name="icdCodes"
                           id="icdCodes"
@@ -527,6 +531,15 @@ const PatientDetails = ({
                               maxHeight: 220, // Adjust this value as needed
                             }),
                           }}
+                        /> */}
+
+                        <IcdDropdown
+                          icdArray={icdArray}
+                          icdCodes={values.icdCodes}
+                          icd10Groups={icd10Groups}
+                          setICDCodes={(codes) =>
+                            setFieldValue("icdCodes", codes)
+                          }
                         />
 
                         {!hasSelected && errors.touched && errors.icdCodes && (

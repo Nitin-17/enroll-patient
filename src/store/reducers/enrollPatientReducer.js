@@ -17,6 +17,16 @@ const initialState = {
   },
   suggestedAddress: {},
   hospitalFeatures: {},
+  icdDropdownData: {
+    list: [],
+    isLoaded: false,
+    isGroupLoaded: false,
+    searchList: [],
+    searchText: null,
+    groupItemList: [],
+    groupItem: null,
+    oldSearchData: [],
+  },
 };
 
 export const fetchDoctorData = createAsyncThunk(
@@ -80,6 +90,7 @@ export const fetchIcdCodes = createAsyncThunk(
       const s3Response = await client.get(response.data.s3Url);
       const groups = [];
       const codes = [];
+      const groupList = [];
       console.log("icdeeecodeeee", s3Response);
 
       s3Response.data.forEach((icd) => {
@@ -88,6 +99,7 @@ export const fetchIcdCodes = createAsyncThunk(
           code: icd.group,
           type: "groups",
         });
+        groupList.push(icd.group);
         icd.codes.forEach((icdData) => {
           codes.push({
             description: icdData.description,
@@ -99,7 +111,7 @@ export const fetchIcdCodes = createAsyncThunk(
         });
       });
 
-      return { groups, codes };
+      return { groups, codes, groupList };
     } catch (error) {
       console.error("Error fetching data:", error);
       throw error;
@@ -220,6 +232,8 @@ const doctorDataSlice = createSlice({
     builder.addCase(fetchIcdCodes.fulfilled, (state, action) => {
       state.icdCodes.icdGroups = action.payload.groups;
       state.icdCodes.icdCode = action.payload.codes;
+      state.icdDropdownData.list = action.payload.groupList;
+      state.icdDropdownData.isLoaded = true;
     });
     /*   builder.addCase(fetchAddress.fulfilled, (state, action) => {
       console.log("address", action);
