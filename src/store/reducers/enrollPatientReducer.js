@@ -80,6 +80,7 @@ export const fetchIcdCodes = createAsyncThunk(
       const s3Response = await client.get(response.data.s3Url);
       const groups = [];
       const codes = [];
+      console.log("icdeeecodeeee", s3Response);
 
       s3Response.data.forEach((icd) => {
         groups.push({
