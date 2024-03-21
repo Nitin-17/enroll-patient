@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-//import SimpleDropdown from "./SimpleDropdown";
+import SimpleDropdown from "./SimpleDropdown.js";
 
 const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
   const { icdDropdownData } = useSelector((state) => state?.doctorData);
   const [active, setActive] = useState("");
-  const [searchText, setSearchText] = useState("");
+  const [searchCodeText, setSearchCodeText] = useState("");
   const [loading, setLoading] = useState(false);
   const [groupLoading, setGroupLoading] = useState(false);
   const [selectedICDCodes, setSelectedICDCodes] = useState([]);
@@ -17,7 +17,27 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
     setIsModalOpen(!isModalOpen);
   };
 
-  const getICDCodesNames = () => {
+  const viewNestedDropdown = () => {};
+
+  const viewSimpleDropdown = () => {
+    console.log("calledddddddddddddd");
+    return (
+      icdDropdownData &&
+      icdDropdownData.list &&
+      icdDropdownData?.list.map((value, i) => (
+        <SimpleDropdown
+          value={value}
+          key={i}
+          selectedICDCodes={selectedICDCodes}
+          setSelectedICDCodes={setSelectedICDCodes}
+          groupLoading={groupLoading}
+          groupItemList={icdDropdownData.groupItemList}
+        />
+      ))
+    );
+  };
+
+  const getICDCodesNamesToShow = () => {
     let name = "";
     icdCodes.forEach((ob) => {
       name = `${name}${name ? "; " : ""}${ob.code} ${ob.description}`;
@@ -60,35 +80,66 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
         </div>
 
         {isModalOpen && (
-          <div
-            className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-button"
-            tabIndex="-1"
-          >
+          <div className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1" role="none">
               <div>
                 <label>
                   <span role="button" tabIndex="0">
                     {icdCodes && icdCodes.length ? (
                       <span className="selected_option_text">
-                        {getICDCodesNames()}
+                        {getICDCodesNamesToShow()}
                       </span>
                     ) : (
                       <p>ICD-10 Code</p>
                     )}
-
-                    <span className="arrow_botttom">
-                      <i
-                        className={`fas ${
-                          isModalOpen ? "fa-caret-up" : "fa-caret-down"
-                        }`}
-                      />
-                    </span>
                   </span>
                 </label>
               </div>
+              <div>
+                {/* <label>Type code or description</label> */}
+
+                <div className="flex flex-row gap-2">
+                  <input
+                    className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    value={searchCodeText}
+                    onChange={(e) => {
+                      setSearchCodeText(e.target.value);
+                      setLoading(false);
+                    }}
+                    placeholder="Type code or description"
+                    type="text"
+                  />
+
+                  {searchCodeText.trim() ? (
+                    <span
+                      className="hover:cursor-pointer"
+                      onClick={() => {
+                        setSearchCodeText("");
+                      }}
+                    >
+                      X
+                    </span>
+                  ) : (
+                    ""
+                  )}
+                </div>
+                <div
+                  className={
+                    searchCodeText.trim() ? "overflow-x-scroll h-64" : ""
+                  }
+                >
+                  {/* {searchCodeText.trim() ? (
+                    showNestedDropdown()
+                  ) : (
+                    <>
+                      <div>{showSelectedListDropdown()}</div>
+                      {showDropdownItem()}
+                    </>
+                  )} */}
+                  <div>{viewSimpleDropdown()}</div>
+                </div>
+              </div>
+
               {/*      <a
                 href="#"
                 className="text-gray-700 block px-4 py-2 text-sm"

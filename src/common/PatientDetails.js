@@ -14,7 +14,7 @@ import { addPatientDetails } from "../store/reducers/enrollPatientReducer.js";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import IcdDropdown from "../modules/icdDropdown/IcdDropdown.js";
+import IcdDropdown from "../modules/icdDropdown/index.js";
 
 const validationSchema = Yup.object()
   .shape({
