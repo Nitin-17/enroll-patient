@@ -1,8 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { data } from "../data";
 
-const NestedDropdown = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const NestedDropdown = ({
+  name,
+  key,
+  code,
+  description,
+  selectedICDCodes,
+  setSelectedICDCodes,
+}) => {
+  const [isOpen, setIsOpen] = useState(true);
+  console.log("inside nested", name, code);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
@@ -10,17 +17,11 @@ const NestedDropdown = () => {
 
   return (
     <>
-      <div className="relative inline-block text-left m-20">
+      <div className="relative z-1 left-24 text-left h-64  ">
         {isOpen && (
-          <div
-            className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-button"
-            tabIndex="-1"
-          >
-            <div className="py-1" role="none">
-              {/* ICd code goes here */}
+          <div className="absolute left-36 z-10 w-64 overflow-y origin-top-right rounded-md bg-white">
+            <div className="left-16">
+              <label htmlFor={code}>{name}</label>
             </div>
           </div>
         )}

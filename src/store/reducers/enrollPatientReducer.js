@@ -8,6 +8,8 @@ const initialState = {
     icdGroups: [],
     icdCode: [],
   },
+  initialIcdCodes: [],
+  icdCodesBySingleGroup: [],
   patientEnrollDetails: {
     doctorLocation: [],
     patientDetails: {},
@@ -91,8 +93,10 @@ export const fetchIcdCodes = createAsyncThunk(
       const groups = [];
       const codes = [];
       const groupList = [];
+      const initialIcdData = [];
       console.log("icdeeecodeeee", s3Response);
 
+      initialIcdData.push(s3Response.data);
       s3Response.data.forEach((icd) => {
         groups.push({
           group: icd.group,
@@ -111,7 +115,7 @@ export const fetchIcdCodes = createAsyncThunk(
         });
       });
 
-      return { groups, codes, groupList };
+      return { groups, codes, groupList, initialIcdData };
     } catch (error) {
       console.error("Error fetching data:", error);
       throw error;
@@ -202,6 +206,10 @@ const doctorDataSlice = createSlice({
         state.patientEnrollDetails.patientDetails
       );
     },
+    addSingleIcdGroupCodes: (state, action) => {
+      state.icdCodesBySingleGroup = action.payload;
+      console.log("state.initialIcdCodes", state.icdCodesBySingleGroup);
+    },
     addPatientAddress: (state, action) => {
       state.patientEnrollDetails.patientAddress = action.payload;
       console.log(
@@ -227,13 +235,15 @@ const doctorDataSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(fetchDoctorData.fulfilled, (state, action) => {
       state.doctorLocationList = action.payload;
-      console.log("doctorLocationData", state.doctorLocationList);
+      //console.log("doctorLocationData", state.doctorLocationList);
     });
     builder.addCase(fetchIcdCodes.fulfilled, (state, action) => {
       state.icdCodes.icdGroups = action.payload.groups;
       state.icdCodes.icdCode = action.payload.codes;
       state.icdDropdownData.list = action.payload.groupList;
       state.icdDropdownData.isLoaded = true;
+      state.initialIcdCodes = action.payload.initialIcdData;
+      console.log("State after putting in", state.initialIcdCodes);
     });
     /*   builder.addCase(fetchAddress.fulfilled, (state, action) => {
       console.log("address", action);
@@ -251,6 +261,8 @@ export const {
   addPatientAddress,
   addPatientThresholds,
   addPatientDevice,
+  initialIcdCodes,
+  addSingleIcdGroupCodes,
 } = doctorDataSlice.actions;
 
 export default doctorDataSlice.reducer;

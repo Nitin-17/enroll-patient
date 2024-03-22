@@ -1,16 +1,22 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import SimpleDropdown from "./SimpleDropdown.js";
+import { showIcdCodes } from "../../helper/utils.js";
+import { addSingleIcdGroupCodes } from "../../store/reducers/enrollPatientReducer.js";
 
 const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
-  const { icdDropdownData } = useSelector((state) => state?.doctorData);
-  const [active, setActive] = useState("");
+  const { icdDropdownData, initialIcdCodes } = useSelector(
+    (state) => state?.doctorData
+  );
+  const dispatch = useDispatch();
+  const [mouseHoverActiveGroup, setMouseHoverActiveGroup] = useState("");
   const [searchCodeText, setSearchCodeText] = useState("");
   const [loading, setLoading] = useState(false);
   const [groupLoading, setGroupLoading] = useState(false);
   const [selectedICDCodes, setSelectedICDCodes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [icdData, setIcdData] = useState([]);
+  const [icdCodeResultByHover, setIcdCodeResultByHover] = useState([]);
 
   const toggleDropdown = () => {
     console.log("clicked");
@@ -26,8 +32,10 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
       icdDropdownData.list &&
       icdDropdownData?.list.map((value, i) => (
         <SimpleDropdown
-          value={value}
+          icdCodeGroupValue={value}
           key={i}
+          mouseHoverActiveGroup={mouseHoverActiveGroup}
+          setMouseHoverActiveGroup={setMouseHoverActiveGroup}
           selectedICDCodes={selectedICDCodes}
           setSelectedICDCodes={setSelectedICDCodes}
           groupLoading={groupLoading}
@@ -45,8 +53,36 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
     return name;
   };
 
-  console.log(icdDropdownData, "icdDropdownData--------------");
-  console.log("icdDropwdoan", icdArray, icd10Groups, setICDCodes);
+  const loadIcdList = useCallback(
+    (icdCodeGroup, searchedIcdText) => {
+      let params = null;
+      if (icdCodeGroup) {
+        params = {
+          group: icdCodeGroup,
+        };
+      } else if ((searchedIcdText, searchedIcdText.trim())) {
+        params = {
+          search: searchedIcdText,
+        };
+      }
+      //console.log("Iniaiiiiiiiiiiiiiiiaaaaaaaaaaaaaaa", initialIcdCodes);
+      const result = showIcdCodes(params, dispatch, initialIcdCodes);
+      if (result) {
+        setIcdCodeResultByHover(result);
+        dispatch(addSingleIcdGroupCodes(result));
+      }
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    if (mouseHoverActiveGroup) {
+      loadIcdList(null, mouseHoverActiveGroup);
+    }
+  }, [mouseHoverActiveGroup, loadIcdList]);
+
+  //console.log(icdDropdownData, "icdDropdownData--------------");
+  //console.log("icdDropwdoan", icdArray, icd10Groups, setICDCodes);
   return (
     <>
       <div className="relative inline-block text-left m-20">

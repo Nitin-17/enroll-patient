@@ -1,35 +1,59 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import NestedDropdown from "./NestedDropdown";
 
 const SimpleDropdown = ({
-  value,
+  icdCodeGroupValue,
   key,
   selectedICDCodes,
   setSelectedICDCodes,
   groupLoading,
+  mouseHoverActiveGroup,
+  setMouseHoverActiveGroup,
 }) => {
+  const { icdDropdownData, icdCodesBySingleGroup } = useSelector(
+    (state) => state?.doctorData
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [icdData, setIcdData] = useState([]);
 
-  const toggleDropdown = () => {
+  /*   const toggleDropdown = () => {
     setIsOpen(!isOpen);
+  }; */
+
+  const viewNestedDropdown = () => {
+    console.log("before,,,,,", icdCodesBySingleGroup[0]);
+    if (icdCodesBySingleGroup && icdCodesBySingleGroup.length > 0) {
+      return icdCodesBySingleGroup[0].map((item) => (
+        <NestedDropdown
+          name={`${item.id} - ${item.description}`}
+          key={item.code}
+          code={item.code}
+          description={item.description}
+          selectedICDCodes={selectedICDCodes}
+          setSelectedICDCodes={setSelectedICDCodes}
+        />
+      ));
+    }
   };
 
-  console.log("+++++++++++++++++++++++++++++++", value);
+  //  console.log("+++++++++++++++++++++++++++++++", icdCodeGroupValue);
 
   return (
     <>
-      <div className="relative inline-block text-left m-20">
+      <div className=" flex flex-col text-left h-8">
         {true && (
-          <div
-            className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-            role="menu"
-            aria-orientation="vertical"
-            aria-labelledby="menu-button"
-            tabIndex="-1"
-          >
-            <div className="py-1" role="none">
-              {/* Loop through ICD List Here */}
-              {value}
+          <div className="absolute left-0 z-10 w-56 h-32 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className="flex flex-col">
+              <button
+                onMouseEnter={() => setMouseHoverActiveGroup(icdCodeGroupValue)}
+              >
+                {icdCodeGroupValue}
+              </button>
+
+              {mouseHoverActiveGroup === icdCodeGroupValue && (
+                <div className="absolute">{viewNestedDropdown()}</div>
+              )}
             </div>
           </div>
         )}

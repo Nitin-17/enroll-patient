@@ -1,4 +1,5 @@
 import { _getAccessToken } from "./localStorageService";
+import { useDispatch, useSelector } from "react-redux";
 /* //import * as crypto from 'crypto-browserify';
 import { Buffer } from "buffer";
 if (!window.Buffer) {
@@ -25,7 +26,7 @@ export const encrypt = (text: string) => {
   const encrypted = cipher.update(text, "utf8", "hex") + cipher.final("hex");
   return encrypted;
 };
- */
+*/
 
 import crypto from "crypto-browserify";
 import { Buffer } from "buffer";
@@ -122,4 +123,29 @@ export const autoFormatPhoneNumber = (input) => {
 export const formatDate = (dateString) => {
   const dateObject = new Date(dateString);
   return dateObject.toUTCString();
+};
+
+/* ICD Codes */
+
+export const showIcdCodes = (params, dispatch, initialIcdCodes) => {
+  console.log(
+    "intial-----------------------------",
+    params,
+    dispatch,
+    initialIcdCodes
+  );
+  if (initialIcdCodes) {
+    const filteredResults = initialIcdCodes[0].filter(
+      (item) => item.group === params.search
+    );
+
+    const result =
+      filteredResults.length > 0
+        ? filteredResults.map((item) => item.codes)
+        : [];
+
+    //console.log(result);
+
+    return result;
+  }
 };
