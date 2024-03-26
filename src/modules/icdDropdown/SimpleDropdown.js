@@ -17,6 +17,8 @@ const SimpleDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const [icdData, setIcdData] = useState([]);
 
+  console.log("_++++++++__________", icdDropdownData);
+
   /*   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   }; */

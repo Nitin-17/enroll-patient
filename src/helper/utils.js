@@ -129,7 +129,12 @@ export const formatDate = (dateString) => {
 
 export const showIcdCodes = (params, dispatch, initialIcdCodes) => {
   console.log("intial-----------------------------", params, initialIcdCodes);
-  if (initialIcdCodes && initialIcdCodes[0]?.length > 0) {
+  if (
+    initialIcdCodes &&
+    initialIcdCodes[0]?.length > 0 &&
+    params &&
+    params?.group
+  ) {
     const filteredResults = initialIcdCodes[0].filter(
       (item) => item.group === params.search
     );
@@ -142,5 +147,33 @@ export const showIcdCodes = (params, dispatch, initialIcdCodes) => {
     //console.log(result);
 
     return result;
+  } else if (params && params.search) {
+    console.log(":::::::::::");
+    const results = initialIcdCodes[0]
+      .map((item) => {
+        const matchingCodes = item.codes.filter(
+          (code) =>
+            code.description.includes(params.search) ||
+            item.group.includes(params.search)
+        );
+        return { group: item.group, matchingCodes };
+      })
+      .filter((item) => item.matchingCodes.length > 0);
+    console.log("rrrrrrrrrrr", results);
   }
+};
+
+/* Debounce funtion for ICD */
+export const debounce = (func, wait) => {
+  let timeout;
+
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
 };

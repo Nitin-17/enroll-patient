@@ -2,19 +2,22 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SimpleDropdown from "./SimpleDropdown.js";
 import NestedDropdown from "./NestedDropdown.js";
-import { showIcdCodes } from "../../helper/utils.js";
+import { showIcdCodes, debounce } from "../../helper/utils.js";
 import { addSingleIcdGroupCodes } from "../../store/reducers/enrollPatientReducer.js";
 
 const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
   const { icdDropdownData, initialIcdCodes } = useSelector(
     (state) => state?.doctorData
   );
+  const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const dispatch = useDispatch();
   const [mouseHoverActiveGroup, setMouseHoverActiveGroup] = useState("");
   const [searchCodeText, setSearchCodeText] = useState("");
   const [loading, setLoading] = useState(false);
   const [groupLoading, setGroupLoading] = useState(false);
-  const [selectedICDCodes, setSelectedICDCodes] = useState([]);
+  const [selectedICDCodes, setSelectedICDCodes] = useState(
+    patientEnrollDetails?.patientDetails?.icdCodes || []
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [icdData, setIcdData] = useState([]);
   const [icdCodeResultByHover, setIcdCodeResultByHover] = useState([]);
@@ -69,18 +72,18 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
   };
 
   const loadIcdList = useCallback(
-    (icdCodeGroup, searchedIcdText) => {
+    (searchedIcdText = null, icdCodeGroup = null) => {
       let params = null;
-      if (icdCodeGroup) {
+      if (icdCodeGroup && !searchCodeText) {
         params = {
           group: icdCodeGroup,
         };
-      } else if ((searchedIcdText, searchedIcdText.trim())) {
+      } else if (searchedIcdText && searchedIcdText.trim()) {
         params = {
           search: searchedIcdText,
         };
       }
-      //console.log("Iniaiiiiiiiiiiiiiiiaaaaaaaaaaaaaaa", initialIcdCodes);
+      console.log("parans", params);
       const result = showIcdCodes(params, dispatch, initialIcdCodes);
       if (result) {
         setIcdCodeResultByHover(result);
@@ -95,6 +98,13 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
       loadIcdList(null, mouseHoverActiveGroup);
     }
   }, [mouseHoverActiveGroup, loadIcdList]);
+
+  const debouncedIcdSearch = useCallback(
+    (inputIcdText) => {
+      debounce(loadIcdList(inputIcdText), 400);
+    },
+    [loadIcdList]
+  );
 
   //console.log(icdDropdownData, "icdDropdownData--------------");
   //console.log("icdDropwdoan", icdArray, icd10Groups, setICDCodes);
@@ -142,6 +152,7 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
                     value={searchCodeText}
                     onChange={(e) => {
                       setSearchCodeText(e.target.value);
+                      debouncedIcdSearch(e.target.value);
                       setLoading(false);
                     }}
                     placeholder="Type code or description"

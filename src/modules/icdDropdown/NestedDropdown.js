@@ -10,7 +10,7 @@ const NestedDropdown = ({
 }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [selectedCode, setSelectedCode] = useState("");
-  console.log("inside nested", name, selectedICDCodes);
+  //console.log("inside nested", name, selectedICDCodes);
 
   const updateSelectedCodes = () => {
     const isCodeSelected = selectedICDCodes.some(
