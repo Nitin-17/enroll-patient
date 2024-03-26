@@ -136,7 +136,7 @@ export const showIcdCodes = (params, dispatch, initialIcdCodes) => {
     params?.group
   ) {
     const filteredResults = initialIcdCodes[0].filter(
-      (item) => item.group === params.search
+      (item) => item.group === params.group
     );
 
     const result =
@@ -144,22 +144,20 @@ export const showIcdCodes = (params, dispatch, initialIcdCodes) => {
         ? filteredResults.map((item) => item.codes)
         : [];
 
-    //console.log(result);
+    console.log("iffffffffff", result);
 
     return result;
   } else if (params && params.search) {
     console.log(":::::::::::");
-    const results = initialIcdCodes[0]
-      .map((item) => {
-        const matchingCodes = item.codes.filter(
-          (code) =>
-            code.description.includes(params.search) ||
-            item.group.includes(params.search)
-        );
-        return { group: item.group, matchingCodes };
-      })
-      .filter((item) => item.matchingCodes.length > 0);
-    console.log("rrrrrrrrrrr", results);
+    const matchingCodes = initialIcdCodes[0].flatMap((item) =>
+      item.codes.filter(
+        (code) =>
+          code.description.includes(params.search) ||
+          item.group.includes(params.search)
+      )
+    );
+    //console.log("rrrrrrrrrrr", matchingCodes);
+    return matchingCodes;
   }
 };
 

@@ -6,9 +6,8 @@ import { showIcdCodes, debounce } from "../../helper/utils.js";
 import { addSingleIcdGroupCodes } from "../../store/reducers/enrollPatientReducer.js";
 
 const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
-  const { icdDropdownData, initialIcdCodes } = useSelector(
-    (state) => state?.doctorData
-  );
+  const { icdDropdownData, initialIcdCodes, icdCodesBySingleGroup } =
+    useSelector((state) => state?.doctorData);
   const { patientEnrollDetails } = useSelector((state) => state?.doctorData);
   const dispatch = useDispatch();
   const [mouseHoverActiveGroup, setMouseHoverActiveGroup] = useState("");
@@ -42,7 +41,24 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
     }
   };
 
-  const viewNestedDropdown = () => {};
+  const viewNestedDropdownForSearch = () => {
+    if (
+      icdCodesBySingleGroup &&
+      icdCodesBySingleGroup?.length > 0 &&
+      searchCodeText
+    ) {
+      return icdCodesBySingleGroup.map((selectedItem) => (
+        <NestedDropdown
+          name={`${selectedItem.name} - ${selectedItem.description}`}
+          key={selectedItem.code}
+          code={selectedItem.name}
+          description={selectedItem.description}
+          selectedICDCodes={selectedICDCodes}
+          setSelectedICDCodes={setSelectedICDCodes}
+        />
+      ));
+    }
+  };
 
   const viewSimpleDropdown = () => {
     return (
@@ -83,7 +99,7 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
           search: searchedIcdText,
         };
       }
-      console.log("parans", params);
+      console.log("params", params);
       const result = showIcdCodes(params, dispatch, initialIcdCodes);
       if (result) {
         setIcdCodeResultByHover(result);
@@ -164,6 +180,7 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
                       className="hover:cursor-pointer"
                       onClick={() => {
                         setSearchCodeText("");
+                        debouncedIcdSearch("");
                       }}
                     >
                       X
@@ -192,8 +209,8 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
                     searchCodeText.trim() ? "overflow-x-scroll h-64" : ""
                   }
                 >
-                  {searchCodeText.trim() ? (
-                    viewNestedDropdown()
+                  {searchCodeText && searchCodeText.trim() ? (
+                    viewNestedDropdownForSearch()
                   ) : (
                     <>
                       <div>{viewSelectedIcdListDropdown()}</div>
