@@ -10,6 +10,7 @@ const initialState = {
   },
   initialIcdCodes: [],
   icdCodesBySingleGroup: [],
+  icdCodesByTextSearch: [],
   patientEnrollDetails: {
     doctorLocation: [],
     patientDetails: {},
@@ -210,6 +211,10 @@ const doctorDataSlice = createSlice({
       state.icdCodesBySingleGroup = action.payload;
       console.log("state.initialIcdCodes", state.icdCodesBySingleGroup);
     },
+    addIcdSearchCodes: (state, action) => {
+      state.icdCodesByTextSearch = action.payload;
+      console.log("state.initialIcdCodes", state.icdCodesByTextSearch);
+    },
     addPatientAddress: (state, action) => {
       state.patientEnrollDetails.patientAddress = action.payload;
       console.log(
@@ -262,6 +267,7 @@ export const {
   addPatientThresholds,
   addPatientDevice,
   initialIcdCodes,
+  addIcdSearchCodes,
   addSingleIcdGroupCodes,
 } = doctorDataSlice.actions;
 

@@ -9,7 +9,7 @@ import EditDetails from "./EditDetails";
 
 const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
   const [patientData, setPatientData] = useState({});
-  const [enrollStep, setEnrollStep] = useState(1);
+  const [enrollStep, setEnrollStep] = useState(3);
   const [doctorData, setDoctorData] = useState([]);
   const [icdCodeData, setIcdCodeData] = useState({});
   const [modalOpen, setModalOpen] = useState(false);

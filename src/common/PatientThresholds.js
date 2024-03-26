@@ -19,12 +19,14 @@ const PatientThresholds = ({ enrollStep, isClicked, setEnrollStep }) => {
     patientEnrollDetails?.patientThresholds?.isShowAllChecked
   );
   const [checked7Days, setChecked7Days] = useState(
-    patientEnrollDetails?.patientThresholds?.bpAverage["7day"]
+    patientEnrollDetails?.patientThresholds?.bpAverage &&
+      patientEnrollDetails?.patientThresholds?.bpAverage["7day"]
       ? patientEnrollDetails.patientThresholds.bpAverage["7day"]
       : false
   );
   const [checked10Readings, setChecked10Reading] = useState(
-    patientEnrollDetails?.patientThresholds?.bpAverage["10readings"]
+    patientEnrollDetails?.patientThresholds?.bpAverage &&
+      patientEnrollDetails?.patientThresholds?.bpAverage["10readings"]
       ? patientEnrollDetails.patientThresholds.bpAverage["10readings"]
       : false
   );
