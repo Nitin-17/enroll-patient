@@ -9,20 +9,47 @@ const NestedDropdown = ({
   setSelectedICDCodes,
 }) => {
   const [isOpen, setIsOpen] = useState(true);
-  console.log("inside nested", name, code);
+  const [selectedCode, setSelectedCode] = useState("");
+  console.log("inside nested", name, selectedICDCodes);
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
+  const updateSelectedCodes = () => {
+    const isCodeSelected = selectedICDCodes.some(
+      (codeItem) => codeItem.code === code
+    );
+
+    if (isCodeSelected) {
+      setSelectedICDCodes((prevState) =>
+        prevState.filter((codeItem) => codeItem.code !== code)
+      );
+      setSelectedCode("");
+    } else {
+      setSelectedICDCodes((prevState) => [...prevState, { code, description }]);
+      setSelectedCode("active");
+    }
   };
 
   return (
     <>
-      <div className="relative z-1 left-24 text-left h-64  ">
+      <div className="w-64 z-1 h-[40px] left-56 text-left border border-green-500">
         {isOpen && (
-          <div className="absolute left-36 z-10 w-64 overflow-y origin-top-right rounded-md bg-white">
-            <div className="left-16">
-              <label htmlFor={code}>{name}</label>
-            </div>
+          <div className="z-10 w-full bg-white border border-gray-200 rounded-md">
+            <input
+              type="checkbox"
+              id={key}
+              checked={selectedICDCodes.some(
+                (codeItem) => codeItem.code === code
+              )}
+              onChange={updateSelectedCodes}
+            />
+            <label
+              htmlFor={code}
+              className={
+                "text-xs text-ellipsis" +
+                (selectedCode === "active" ? "text-blue-600 font-bold" : "")
+              }
+            >
+              {name}
+            </label>
           </div>
         )}
       </div>

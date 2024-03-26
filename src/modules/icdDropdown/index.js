@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import SimpleDropdown from "./SimpleDropdown.js";
+import NestedDropdown from "./NestedDropdown.js";
 import { showIcdCodes } from "../../helper/utils.js";
 import { addSingleIcdGroupCodes } from "../../store/reducers/enrollPatientReducer.js";
 
@@ -23,10 +24,24 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
     setIsModalOpen(!isModalOpen);
   };
 
+  const viewSelectedIcdListDropdown = () => {
+    if (icdCodes && icdCodes.length > 0) {
+      return icdCodes.map((selectedItem) => (
+        <NestedDropdown
+          name={`${selectedItem.code} - ${selectedItem.description}`}
+          key={selectedItem.code}
+          code={selectedItem.code}
+          description={selectedItem.description}
+          selectedICDCodes={selectedICDCodes}
+          setSelectedICDCodes={setSelectedICDCodes}
+        />
+      ));
+    }
+  };
+
   const viewNestedDropdown = () => {};
 
   const viewSimpleDropdown = () => {
-    console.log("calledddddddddddddd");
     return (
       icdDropdownData &&
       icdDropdownData.list &&
@@ -72,7 +87,7 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
         dispatch(addSingleIcdGroupCodes(result));
       }
     },
-    [dispatch]
+    [dispatch, initialIcdCodes]
   );
 
   useEffect(() => {
@@ -119,19 +134,6 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
           <div className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
             <div className="py-1" role="none">
               <div>
-                <label>
-                  <span role="button" tabIndex="0">
-                    {icdCodes && icdCodes.length ? (
-                      <span className="selected_option_text">
-                        {getICDCodesNamesToShow()}
-                      </span>
-                    ) : (
-                      <p>ICD-10 Code</p>
-                    )}
-                  </span>
-                </label>
-              </div>
-              <div>
                 {/* <label>Type code or description</label> */}
 
                 <div className="flex flex-row gap-2">
@@ -159,42 +161,57 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
                     ""
                   )}
                 </div>
+
+                {/* <div>
+                  <label>
+                    <span role="button" tabIndex="0">
+                      {icdCodes && icdCodes.length ? (
+                        <span className="text-xs font-normal">
+                          {getICDCodesNamesToShow()}
+                        </span>
+                      ) : (
+                        <p>No Code Found</p>
+                      )}
+                    </span>
+                  </label>
+                </div> */}
+
                 <div
                   className={
                     searchCodeText.trim() ? "overflow-x-scroll h-64" : ""
                   }
                 >
-                  {/* {searchCodeText.trim() ? (
-                    showNestedDropdown()
+                  {searchCodeText.trim() ? (
+                    viewNestedDropdown()
                   ) : (
                     <>
-                      <div>{showSelectedListDropdown()}</div>
-                      {showDropdownItem()}
+                      <div>{viewSelectedIcdListDropdown()}</div>
+                      {viewSimpleDropdown()}
                     </>
-                  )} */}
-                  <div>{viewSimpleDropdown()}</div>
+                  )}
+
+                  <div className="p-4 flex z-999999 flex-row justify-start gap-4 w-64 border-red-500 border">
+                    <button
+                      className="w-16 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                      onClick={() => setIsModalOpen(false)}
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="w-16 hover:cursor-pointer rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                      onClick={() => {
+                        console.log("+++++++++++++=");
+                        setICDCodes(selectedICDCodes);
+                        setIsModalOpen(false);
+                      }}
+                    >
+                      Add
+                    </button>
+                  </div>
                 </div>
               </div>
-
-              {/*      <a
-                href="#"
-                className="text-gray-700 block px-4 py-2 text-sm"
-                role="menuitem"
-                tabIndex="-1"
-                id="menu-item-1"
-              >
-                Support
-              </a>
-              <a
-                href="#"
-                className="text-gray-700 block px-4 py-2 text-sm"
-                role="menuitem"
-                tabIndex="-1"
-                id="menu-item-2"
-              > 
-                License
-              </a>
-              */}
             </div>
           </div>
         )}

@@ -110,7 +110,7 @@ const PatientDetails = ({
     consent: patientEnrollDetails?.patientDetails?.consent || "no",
     patientMRN: patientEnrollDetails?.patientDetails?.patientMRN || "",
     gender: patientEnrollDetails?.patientDetails?.gender || "",
-    icdCodes: [],
+    icdCodes: patientEnrollDetails?.patientDetails?.icdCodes || [],
     contactVia: {
       phone: patientEnrollDetails?.patientDetails?.contactVai?.phone
         ? patientEnrollDetails?.patientDetails?.contactVai.phone

@@ -128,13 +128,8 @@ export const formatDate = (dateString) => {
 /* ICD Codes */
 
 export const showIcdCodes = (params, dispatch, initialIcdCodes) => {
-  console.log(
-    "intial-----------------------------",
-    params,
-    dispatch,
-    initialIcdCodes
-  );
-  if (initialIcdCodes) {
+  console.log("intial-----------------------------", params, initialIcdCodes);
+  if (initialIcdCodes && initialIcdCodes[0]?.length > 0) {
     const filteredResults = initialIcdCodes[0].filter(
       (item) => item.group === params.search
     );
