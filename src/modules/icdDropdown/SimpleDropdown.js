@@ -15,6 +15,8 @@ const SimpleDropdown = ({
     (state) => state?.doctorData
   );
   const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [icdData, setIcdData] = useState([]);
 
   console.log("_++++++++__________", icdDropdownData);
@@ -44,17 +46,24 @@ const SimpleDropdown = ({
     <>
       <div className=" flex flex-col text-left h-8">
         {true && (
-          <div className="absolute left-0 z-10 w-56 h-8 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className="flex flex-col h-[10vh]">
-              <button
-                onMouseEnter={() => setMouseHoverActiveGroup(icdCodeGroupValue)}
-                className="h-8"
-              >
+          <div
+            onMouseEnter={() => {
+              setMouseHoverActiveGroup(icdCodeGroupValue);
+              setIsLoading(true);
+            }}
+            onMouseLeave={() => {
+              setMouseHoverActiveGroup("");
+              setIsLoading(true);
+            }}
+            className="absolute left-0 z-10 w-72 h-8 origin-top-right bg-white hover:bg-slate-100 hover:cursor-pointer ring-black ring-opacity-5 focus:outline-none"
+          >
+            <div className="py-1 inline-block w-64">
+              <button className="h-8 pl-6 text-justify">
                 {icdCodeGroupValue}
               </button>
 
-              {mouseHoverActiveGroup === icdCodeGroupValue && (
-                <div className="overflow-y-scroll relative z-20 left-56 w-72 h-32 bg-white shadow-lg border border-gray-200">
+              {mouseHoverActiveGroup === icdCodeGroupValue && isLoading && (
+                <div className="overflow-y-scroll absolute z-20 left-56 w-72 h-32 bg-white shadow-lg border border-gray-200">
                   {viewNestedDropdown()}
                 </div>
               )}

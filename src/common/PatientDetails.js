@@ -493,7 +493,7 @@ const PatientDetails = ({
                     </div>
 
                     {/* ICD code and Language */}
-                    <div className="flex flex-row gap-5">
+                    <div className="flex flex-row justify-between">
                       <div>
                         {/* <Select
                           className="text-sm rounded-3xl w-72"
@@ -555,7 +555,7 @@ const PatientDetails = ({
                           />
                         )} */}
                       </div>
-                      <div className="flex flex-col  gap-5">
+                      <div className="flex flex-col gap-5">
                         <div>
                           <fieldset className="flex flex-col">
                             <p className="font-medium">Choose Language</p>

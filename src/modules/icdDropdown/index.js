@@ -137,11 +137,13 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
   //console.log("icdDropwdoan", icdArray, icd10Groups, setICDCodes);
   return (
     <>
-      <div className="relative inline-block text-left m-20">
+      <div className="relative inline-block text-left ">
         <div>
           <button
             type="button"
-            className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            className={
+              "inline-flex w-72 border rounded-t-3xl h-10 justify-center gap-x-1.5  bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 "
+            }
             id="menu-button"
             onClick={() => {
               if (!loading) {
@@ -168,14 +170,14 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
         </div>
 
         {isModalOpen && (
-          <div className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className="py-1" role="none">
+          <div className="left-0 z-10 w-72 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div className=" w-64" role="none">
               <div>
                 {/* <label>Type code or description</label> */}
 
-                <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 p-2 pl-4 w-72">
                   <input
-                    className="block w-full rounded-md border-0 py-1.5 pl-7 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                    className="block w-64 rounded-md mt-2 border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     value={searchCodeText}
                     onChange={(e) => {
                       setSearchCodeText(e.target.value);
