@@ -151,7 +151,14 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
               }
             }}
           >
-            ICD-10 Code
+            <span className="inline-block w-full overflow-hidden whitespace-nowrap overflow-ellipsis text-xs p-1 text-[#0e55aa]">
+              {icdCodes && icdCodes.length > 0 ? (
+                getICDCodesNamesToShow()
+              ) : (
+                <p className="text-black-700">ICD Code-10</p>
+              )}
+            </span>
+
             <svg
               className={`-mr-1 h-5 w-5 text-gray-400 transform transition-transform ${
                 isModalOpen ? "rotate-180" : ""
@@ -171,11 +178,11 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
 
         {isModalOpen && (
           <div className="left-0 z-10 w-72 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-            <div className=" w-64" role="none">
+            <div className="w-72" role="none">
               <div>
                 {/* <label>Type code or description</label> */}
 
-                <div className="flex flex-row gap-2 p-2 pl-4 w-72">
+                <div className="flex flex-row gap-2 p-2 pl-4 w-72 ">
                   <input
                     className="block w-64 rounded-md mt-2 border-0 py-1.5 pl-5 pr-20 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     value={searchCodeText}
@@ -190,13 +197,21 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
 
                   {searchCodeText.trim() ? (
                     <span
-                      className="hover:cursor-pointer"
+                      className="hover:cursor-pointer absolute text-grey-300"
                       onClick={() => {
                         setSearchCodeText("");
                         debouncedIcdSearch("");
                       }}
                     >
-                      X
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="8"
+                        height="8"
+                        viewBox="0 0 24 24"
+                        className={`relative left-56 -mr-1 h-5 w-4 top-4 text-gray-300 transform transition-transform `}
+                      >
+                        <path d="m2.828 17.828 6.086-6.086L15 17.828 17.828 15l-6.086-6.086 6.086-6.086L15 0 8.914 6.086 2.828 0 0 2.828l6.085 6.086L0 15l2.828 2.828z" />
+                      </svg>
                     </span>
                   ) : (
                     ""
@@ -219,7 +234,9 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
 
                 <div
                   className={
-                    searchCodeText.trim() ? "overflow-x-scroll h-64" : ""
+                    searchCodeText.trim()
+                      ? "overflow-y-scroll overflow-x-hidden h-64"
+                      : ""
                   }
                 >
                   {searchCodeText && searchCodeText.trim() ? (
@@ -231,9 +248,9 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
                     </>
                   )}
 
-                  <div className="p-4 flex z-999999 flex-row justify-start gap-4 w-64 border-red-500 border">
+                  <div className="p-4 flex z-999999 flex-row justify-start gap-4 w-72">
                     <button
-                      className="w-16 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                      className="w-28 rounded-lg bg-[#61636B] hover:bg-[#343a40] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                       onClick={() => setIsModalOpen(false)}
                       type="button"
                     >
@@ -241,9 +258,8 @@ const IcdDropdown = ({ icdArray, icd10Groups, setICDCodes, icdCodes }) => {
                     </button>
                     <button
                       type="button"
-                      className="w-16 hover:cursor-pointer rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
+                      className="w-28 hover:cursor-pointer rounded-lg bg-[#0e55aa] hover:bg-[#05346c] border-2 pt-2.5 pb-2.5 text-sm justify-center text-white font-[450]"
                       onClick={() => {
-                        console.log("+++++++++++++=");
                         setICDCodes(selectedICDCodes);
                         setIsModalOpen(false);
                       }}

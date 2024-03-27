@@ -30,9 +30,9 @@ const NestedDropdown = ({
 
   return (
     <>
-      <div className="w-64 z-1 h-[40px] left-56 text-left border border-green-500">
+      <div className="w-64 z-1 h-auto p-2 left-56 text-left hover:bg-slate-100 hover:text-[#0e55aa] hover:cursor-pointer">
         {isOpen && (
-          <div className="z-10 w-full bg-white border border-gray-200 rounded-md">
+          <div className="flex flex-row gap-5 z-10 w-64">
             <input
               type="checkbox"
               id={key}
@@ -44,8 +44,8 @@ const NestedDropdown = ({
             <label
               htmlFor={code}
               className={
-                "text-xs text-ellipsis" +
-                (selectedCode === "active" ? "text-blue-600 font-bold" : "")
+                "text-xs font-[650] text-ellipsis " +
+                (selectedCode === "active" ? "text-blue-700 font-bold" : "")
               }
             >
               {name}
