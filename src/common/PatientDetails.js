@@ -31,11 +31,8 @@ const validationSchema = Yup.object()
     consent: Yup.string().required("Enter select consent"),
     mobilePhone: Yup.string()
       .required("Phone number is required")
-      .min(10, "Mobile Phone should have at least 10 digit")
-      .max(10, "Mobile Phone should not exceed 10 digit"),
-    homePhone: Yup.string()
-      .min(10, "Home Phone should have at least 10 digit")
-      .max(10, "Home Phone should not exceed 10 digit"),
+      .matches(phoneRegExp, "Invalid Mobile phone number"),
+    homePhone: Yup.string().matches(phoneRegExp, "Invalid Home phone number"),
     patientMRN: Yup.string()
       .optional()
       .required("Patient MRN")
@@ -54,7 +51,9 @@ const validationSchema = Yup.object()
     otherwise: Yup.string().notRequired(),
   }), */
     language: Yup.string().required("Select language"),
-    icdCodes: Yup.array().required("ICD-10 Code is required"),
+    icdCodes: Yup.array()
+      .required()
+      .min(1, "At least one ICD-10 code is required"),
     contactVia: Yup.lazy((value) => {
       if (value && value.consent === "yes") {
         return Yup.object()
@@ -342,11 +341,15 @@ const PatientDetails = ({
                       <div className="flex-col">
                         <Field
                           className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          type="number"
+                          type="text"
+                          autoComplete="tel"
                           name="mobilePhone"
                           placeholder="Phone Number"
                           onChange={(e) => {
-                            setFieldValue("mobilePhone", e.target.value);
+                            setFieldValue(
+                              "mobilePhone",
+                              autoFormatPhoneNumber(e.target.value)
+                            );
                           }}
                         />
                         <ErrorMessage
@@ -358,9 +361,16 @@ const PatientDetails = ({
                       <div className="flex-col">
                         <Field
                           className="border text-sm rounded-3xl focus:ring-blue-500 focus:border-blue-500  w-72 p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          type="number"
                           name="homePhone"
+                          type="text"
+                          autoComplete="tel"
                           placeholder="Home Number"
+                          onChange={(e) => {
+                            setFieldValue(
+                              "homePhone",
+                              autoFormatPhoneNumber(e.target.value)
+                            );
+                          }}
                         />
                         <ErrorMessage
                           name="homePhone"
@@ -495,44 +505,6 @@ const PatientDetails = ({
                     {/* ICD code and Language */}
                     <div className="flex flex-row justify-between">
                       <div>
-                        {/* <Select
-                          className="text-sm rounded-3xl w-72"
-                          name="icdCodes"
-                          id="icdCodes"
-                          onChange={(selectedOption) => {
-                            setFieldValue(
-                              "icdCodes",
-                              selectedOption
-                                ? selectedOption.map((option) => option.name)
-                                : []
-                            );
-                            setHasSelected(true);
-                          }}
-                          placeholder="Select an ICD Code"
-                          options={icdArray}
-                          isMulti
-                          maxMenuHeight={220}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              width: "full",
-                              padding: "4px",
-                              borderRadius: "25px",
-                              borderColor:
-                                !hasSelected && errors.touched
-                                  ? "red"
-                                  : "black",
-                              "&:hover": {
-                                borderColor: "black",
-                              },
-                            }),
-                            menu: (provided) => ({
-                              ...provided,
-                              maxHeight: 220, // Adjust this value as needed
-                            }),
-                          }}
-                        /> */}
-
                         <IcdDropdown
                           icdArray={icdArray}
                           icdCodes={values.icdCodes}
@@ -542,18 +514,16 @@ const PatientDetails = ({
                           }
                         />
 
-                        {!hasSelected && errors.touched && errors.icdCodes && (
+                        {/*  {!hasSelected && errors.touched && errors.icdCodes && (
                           <p className="text-red-500 text-xs">
                             {errors.icdCodes}
                           </p>
-                        )}
-                        {/* {!hasSelected && (
-                          <ErrorMessage
-                            name="icdCodes"
-                            component="div"
-                            className="text-red-600 text-xs"
-                          />
                         )} */}
+                        {values.icdCodes && values.icdCodes.length <= 0 && (
+                          <p className="text-red-500 text-xs">
+                            ICD Code is required
+                          </p>
+                        )}
                       </div>
                       <div className="flex flex-col gap-5">
                         <div>

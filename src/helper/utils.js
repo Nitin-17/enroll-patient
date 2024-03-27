@@ -85,39 +85,36 @@ export const isLogin = () => {
   }
   return false;
 };
+
 export const phoneRegExp = /^[(]?\d{3}[)]?[(\s)?.-]\d{3}[\s.-]\d{4}$/g;
 export const autoFormatPhoneNumber = (input) => {
-  if (typeof input === "string") {
-    if (input.includes("+1")) {
-      input = input.replace("+1", "");
-    } else if (input.includes("+91")) {
-      input = input.replace("+91", "");
-    }
-    // Strip all characters from the input except digits
-    input = input.replace(/[^\d]/g, "");
+  if (typeof input !== "string") return input;
 
-    // Trim the remaining input to ten characters, to preserve phone number format
-    input = input.substring(0, 10);
+  // Remove country code prefixes
+  input = input.replace(/^\+1|^\+91/g, "");
 
-    // Based upon the length of the string, we add formatting as necessary
-    var size = input.length;
-    if (size === 0) {
-      // input = input;
-    } else if (size < 4) {
-      input = "(" + input;
-    } else if (size < 7) {
-      input = "(" + input.substring(0, 3) + ")-" + input.substring(3, 6);
-    } else {
-      input =
-        "(" +
-        input.substring(0, 3) +
-        ")-" +
-        input.substring(3, 6) +
-        "-" +
-        input.substring(6, 10);
-    }
-    return input;
+  // Strip all characters except digits
+  input = input.replace(/[^\d]/g, "");
+
+  // Trim to 10 characters
+  input = input.substring(0, 10);
+
+  // Add formatting based on length
+  const size = input.length;
+  if (size === 0) {
+    // No changes needed
+  } else if (size < 4) {
+    input = `(${input}`;
+  } else if (size < 7) {
+    input = `(${input.substring(0, 3)})-${input.substring(3, 6)}`;
+  } else {
+    input = `(${input.substring(0, 3)})-${input.substring(
+      3,
+      6
+    )}-${input.substring(6, 10)}`;
   }
+
+  return input;
 };
 
 export const formatDate = (dateString) => {
