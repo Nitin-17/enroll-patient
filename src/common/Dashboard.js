@@ -21,20 +21,15 @@ const Dashboard = () => {
   const fetchDoctorLocationDetails = () => {
     setIsLoading(true);
     dispatch(fetchDoctorData()).then((response) => {
-      console.log("Called");
       setIsLoading(false);
       setIsClicked(true);
     });
     dispatch(fetchIcdCodes()).then((response) => {
-      console.log("Called");
-      console.log(response);
       setIcd10Codes(response.payload);
       setIsLoading(false);
       setIsClicked(true);
     });
     dispatch(getHospitalFeatures()).then((response) => {
-      console.log("Called");
-
       setIsLoading(false);
       setIsClicked(true);
     });

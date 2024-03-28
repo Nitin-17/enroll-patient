@@ -172,3 +172,14 @@ export const debounce = (func, wait) => {
     timeout = setTimeout(later, wait);
   };
 };
+
+/* Sort Location List */
+export const sortDataList = (data, name) => {
+  return data.sort((a, b) =>
+    a[`${name}`]?.toLowerCase() > b[`${name}`]?.toLowerCase()
+      ? 1
+      : b[`${name}`]?.toLowerCase() > a[`${name}`]?.toLowerCase()
+      ? -1
+      : 0
+  );
+};

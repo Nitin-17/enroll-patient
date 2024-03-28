@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import "../css/ReactSelect.css";
 import { fetchDoctorData } from "../store/reducers/enrollPatientReducer";
+import { sortDataList } from "../helper/utils";
 
 const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
   const { doctorLocationList, selectLocationList } = useSelector(
@@ -16,7 +17,6 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
   const [selectedLocation, setSelectedLocation] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedPhysician, setSelectedPhysician] = useState("");
-  const [showPhysicianList, setShowPhysicianList] = useState(false);
 
   /* Data State for All 3 Dropdowns */
   const [locationList, setLocationList] = useState([]);
@@ -24,9 +24,9 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
   const [physicianList, setPhysicianList] = useState([]);
 
   /* Show State for All 3 Dropdowns */
-  const [showLocation, setShowLocation] = useState(false);
-  const [showDepartment, setShowDepartment] = useState(false);
-  const [showPhysician, setShowPhysician] = useState(false);
+  const [showLocationOptions, setShowLocationOptions] = useState(false);
+  const [showDepartmentOptions, setShowDepartmentOptions] = useState(false);
+  const [showPhysicianOptions, setShowPhysicianOptions] = useState(false);
 
   const [hasSelected, setHasSelected] = useState(false);
   const dispatch = useDispatch();
@@ -34,11 +34,69 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
 
   /* Fetching the doctorLocationList Data that we fetch  and saved via get-hospitalFeatures API call */
   useEffect(() => {
-    console.log("SelectLocationData", selectLocationList);
+    console.log("SelectLocationData", selectLocationList, doctorData);
 
-    if (selectLocationList && selectLocationList?.departmentList.length > 0) {
+    /* Checking whether showLocation is true based on data received */
+    let showLocation = selectLocationList?.locationList?.length > 0;
+    setShowLocationOptions(showLocation);
+
+    if (selectLocationList && selectLocationList?.locationList?.length > 1) {
+      let location = selectLocationList.locationList.map((loc) => {
+        return { value: loc.key, label: loc.name };
+      });
+      setLocationList(location);
+      /*  if (doctorLocationList.selectedLocation) {
+        const index = location.findIndex((loc) => loc.value === doctorLocationList.selectedLocation);
+        if (index >= 0) {
+            setLocationList(location[`${index}`]);
+        }
+    } */
+    }
+
+    /* Checking whether showDepartment is true based on data received */
+    let showDepartment = selectLocationList?.departmentList?.length > 0;
+    setShowDepartmentOptions(showDepartment);
+
+    if (selectLocationList && selectLocationList?.departmentList?.length > 1) {
+      let department = selectLocationList.departmentList.map((loc) => {
+        return { value: loc.key, label: loc.name };
+      });
+      setDepartmentList(department);
     }
   }, [selectLocationList]);
+
+  /* Filtering the physician list */
+  const filterDoctorList = (doctorDataList) => {
+    return doctorDataList
+      .filter(
+        (item) =>
+          selectedLocation &&
+          selectedDepartment &&
+          item.facilityLocationIds.includes(selectedLocation) &&
+          item.departmentIds.includes(selectedDepartment)
+      )
+      .map((user) => ({
+        label: user.name || user.emailAddress,
+        value: user.userID,
+      }));
+  };
+
+  /* Setting up the physician dropdown options */
+  useEffect(() => {
+    if (doctorData && doctorData.length > 0) {
+      if (
+        selectLocationList?.locationList &&
+        selectLocationList?.departmentList.length === 1 &&
+        selectLocationList?.locationList.length === 1
+      ) {
+        const FilteredDoctorData = filterDoctorList(doctorData);
+        if (FilteredDoctorData.length === 1) {
+          selectedPhysician(FilteredDoctorData[0]);
+        }
+        physicianList(FilteredDoctorData);
+      }
+    }
+  }, [doctorData]);
 
   const validationSchema = Yup.object().shape({
     location: Yup.string().required("Location is required"),
@@ -61,33 +119,65 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
 
   const handleClose = () => {
     setModalOpen(false);
-    //onClose();
   };
 
-  const handleNextPage = async (validateForm) => {
-    console.log("validate");
-    //const errors = await validateForm();
-    /*    if (!Object.keys(errors).length) {
-      setCurrentPage(currentPage + 1);
-    } */
-  };
-
-  const handlePrevPage = () => {
-    setCurrentPage(currentPage - 1);
-  };
-
-  const onChangeLocation = (selectedOption) => {
-    setSelectedLocation(selectedOption);
+  const onChangeLocation = (values) => {
+    /*  setSelectedLocation(selectedOption);
     setSelectedDepartment("");
     setSelectedPhysician("");
     setHasSelected(true);
-    //setShowPhysicianList(false);
+    //setShowPhysicianList(false); */
+    console.log("valuesssss", values);
+    setSelectedLocation(values);
+    setPhysicianList("");
+    if (doctorData && doctorData.length > 0) {
+      const dataOnLocationChange = doctorData
+        .filter(
+          (item) =>
+            item.facilityLocationIds.includes(values.value) &&
+            selectedDepartment &&
+            item.departmentIds.includes(selectedDepartment)
+        )
+        .map((user) => {
+          return {
+            label: user.name || user.emailAddress,
+            value: user.userID,
+          };
+        });
+      console.log("dataOnLocationChange");
+      if (dataOnLocationChange.length === 1) {
+        setSelectedPhysician(dataOnLocationChange[0]);
+      }
+      setPhysicianList(dataOnLocationChange);
+    }
   };
 
-  const onChangeDepartment = (selectedOption) => {
-    setSelectedDepartment(selectedOption);
+  const onChangeDepartment = (values) => {
+    /*  setSelectedDepartment(selectedOption);
     setSelectedPhysician("");
-    //setShowPhysicianList(false);
+    //setShowPhysicianList(false); */
+    console.log("valuesssss", values);
+    setSelectedDepartment(values);
+    setPhysicianList("");
+    if (doctorData && doctorData.length > 0) {
+      const dataOnDepartmentChange = doctorData
+        .filter(
+          (item) =>
+            item.facilityLocationIds.includes(values.value) &&
+            selectedDepartment &&
+            item.departmentIds.includes(selectedDepartment)
+        )
+        .map((user) => {
+          return {
+            label: user.name || user.emailAddress,
+            value: user.userID,
+          };
+        });
+      /*     if (dataOnDepartmentChange.length === 1) {
+        setSelectedPhysician(dataOnDepartmentChange[0]);
+      } */
+      setPhysicianList(dataOnDepartmentChange);
+    }
   };
 
   const onChangePhysician = (selectedOption) => {
@@ -120,6 +210,35 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
     };
   }, []);
 
+  const optionStyle = {
+    control: (baseStyles, state) => ({
+      ...baseStyles,
+      borderRadius: "15px",
+      fontSize: "14px",
+      //borderColor: hasSelected ? "red" : "black",
+      "&:hover": {
+        borderColor: "black",
+      },
+    }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+      return {
+        ...styles,
+        display: "flex",
+        flexDirection: "col",
+        gap: "1rem",
+        padding: "2px",
+        margin: "2px",
+        width: "full",
+        cursor: isDisabled ? "not-allowed" : "default",
+        "&:hover": {
+          border: "2px solid black",
+          borderRadius: "5px",
+          position: "relative",
+        },
+      };
+    },
+  };
+
   return (
     <>
       {modalOpen && enrollStep === 0 && (
@@ -151,26 +270,19 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                       </div>
                       <div className="rounded-lg">
                         <Select
-                          aria-label="select location"
                           name="location"
-                          classNamePrefix="react-select"
-                          value={selectedLocation}
-                          onChange={onChangeLocation}
+                          className="text-sm"
+                          options={
+                            locationList.length > 0 &&
+                            sortDataList(locationList, "label")
+                          }
+                          onChange={(values) => onChangeLocation(values)}
+                          value={
+                            (values.location =
+                              selectedLocation || values.location)
+                          }
                           placeholder="Select a Location"
-                          options={doctorData.map((hospital) => ({
-                            label: hospital.name,
-                            value: hospital.hospitalID,
-                          }))}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              borderRadius: "15px",
-                              borderColor: hasSelected ? "red" : "black",
-                              "&:hover": {
-                                borderColor: "black",
-                              },
-                            }),
-                          }}
+                          styles={optionStyle}
                         />
                         {touched.location && errors.location && (
                           <div className="text-red-500 text-xs font-medium text-center">
@@ -181,22 +293,17 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                       <div className="rounded-lg">
                         <Select
                           name="department"
-                          value={selectedDepartment}
-                          onChange={onChangeDepartment}
+                          value={
+                            (values.department =
+                              selectedDepartment || values.department)
+                          }
+                          onChange={(values) => onChangeDepartment(values)}
                           placeholder="Select a Department"
-                          options={doctorData.map((hospital) => ({
-                            label: hospital.name,
-                            value: hospital.hospitalID,
-                          }))}
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              borderRadius: "15px",
-                              "&:hover": {
-                                borderColor: "black",
-                              },
-                            }),
-                          }}
+                          options={
+                            departmentList.length > 0 &&
+                            sortDataList(departmentList, "label")
+                          }
+                          styles={optionStyle}
                         />
                         {touched.department && errors.department && (
                           <div className="text-red-500 text-xs font-medium text-center">
@@ -207,28 +314,11 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
                       <div className="rounded-lg">
                         <Select
                           name="physician"
-                          value={selectedPhysician}
-                          onChange={onChangePhysician}
+                          options={sortDataList(physicianList, "label")}
+                          value={(values.doctor = selectedPhysician)}
+                          onChange={(values) => onChangePhysician(values)}
                           placeholder="Select a Physician"
-                          options={
-                            selectedDepartment &&
-                            selectedLocation &&
-                            Array.isArray(doctorData)
-                              ? doctorData.map((hospital) => ({
-                                  label: hospital.name,
-                                  value: hospital.hospitalID,
-                                }))
-                              : []
-                          }
-                          styles={{
-                            control: (baseStyles, state) => ({
-                              ...baseStyles,
-                              borderRadius: "15px",
-                              "&:hover": {
-                                borderColor: "black",
-                              },
-                            }),
-                          }}
+                          styles={optionStyle}
                         />
                         {touched.physician && errors.physician && (
                           <div className="text-red-500 text-xs font-medium text-center">

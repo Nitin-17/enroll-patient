@@ -24,7 +24,6 @@ const EnrollPatient = ({ isClicked, setIsClicked, icd10Codes }) => {
     }
 
     if (icd10Codes?.codes && icd10Codes.codes.length > 0) {
-      console.log("index", icd10Codes.codes.length);
       setIcdCodeData(icd10Codes);
     }
   }, [doctorLocationList, icd10Codes, hospitalFeatures]);

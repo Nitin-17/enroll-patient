@@ -100,7 +100,6 @@ export const fetchIcdCodes = createAsyncThunk(
       const codes = [];
       const groupList = [];
       const initialIcdData = [];
-      console.log("icdeeecodeeee", s3Response);
 
       initialIcdData.push(s3Response.data);
       s3Response.data.forEach((icd) => {
@@ -253,7 +252,6 @@ const doctorDataSlice = createSlice({
       state.icdDropdownData.list = action.payload.groupList;
       state.icdDropdownData.isLoaded = true;
       state.initialIcdCodes = action.payload.initialIcdData;
-      console.log("State after putting in", state.initialIcdCodes);
     });
     /*   builder.addCase(fetchAddress.fulfilled, (state, action) => {
       console.log("address", action);
