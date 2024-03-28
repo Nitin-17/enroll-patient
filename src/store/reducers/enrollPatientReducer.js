@@ -4,6 +4,11 @@ import client from "../../helper/axios";
 
 const initialState = {
   doctorLocationList: [],
+  selectLocationList: {
+    locationList: [],
+    departmentList: [],
+    physicianList: [],
+  },
   icdCodes: {
     icdGroups: [],
     icdCode: [],
@@ -185,7 +190,7 @@ export const getHospitalFeatures = createAsyncThunk(
       );
 
       if (response && response.data && response.data.status) {
-        //console.log("called hospital feature", response);
+        console.log("called hospital feature", response?.data?.data);
         return response.data;
       }
     } catch (error) {
@@ -256,6 +261,10 @@ const doctorDataSlice = createSlice({
     }); */
     builder.addCase(getHospitalFeatures.fulfilled, (state, action) => {
       state.hospitalFeatures = action.payload;
+      state.selectLocationList.departmentList =
+        action.payload?.data?.departments;
+      state.selectLocationList.locationList =
+        action.payload?.data?.facilityLocation;
     });
   },
 });

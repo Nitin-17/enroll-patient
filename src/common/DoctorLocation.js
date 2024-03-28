@@ -7,7 +7,7 @@ import "../css/ReactSelect.css";
 import { fetchDoctorData } from "../store/reducers/enrollPatientReducer";
 
 const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
-  const { doctorLocationList, error } = useSelector(
+  const { doctorLocationList, selectLocationList } = useSelector(
     (state) => state?.doctorData
   );
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,9 +18,27 @@ const DoctorLocation = ({ isOpen, onClose, setEnrollStep, enrollStep }) => {
   const [selectedPhysician, setSelectedPhysician] = useState("");
   const [showPhysicianList, setShowPhysicianList] = useState(false);
 
+  /* Data State for All 3 Dropdowns */
+  const [locationList, setLocationList] = useState([]);
+  const [departmentList, setDepartmentList] = useState([]);
+  const [physicianList, setPhysicianList] = useState([]);
+
+  /* Show State for All 3 Dropdowns */
+  const [showLocation, setShowLocation] = useState(false);
+  const [showDepartment, setShowDepartment] = useState(false);
+  const [showPhysician, setShowPhysician] = useState(false);
+
   const [hasSelected, setHasSelected] = useState(false);
   const dispatch = useDispatch();
   const modalRef = useRef();
+
+  /* Fetching the doctorLocationList Data that we fetch  and saved via get-hospitalFeatures API call */
+  useEffect(() => {
+    console.log("SelectLocationData", selectLocationList);
+
+    if (selectLocationList && selectLocationList?.departmentList.length > 0) {
+    }
+  }, [selectLocationList]);
 
   const validationSchema = Yup.object().shape({
     location: Yup.string().required("Location is required"),
